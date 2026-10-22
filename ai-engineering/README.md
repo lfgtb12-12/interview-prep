@@ -1,6 +1,6 @@
 # AI Engineering Handbook
 
-Version 0.1 — 2026-10-22
+Version 0.2 — 2026-10-22
 
 ## Purpose
 Prepare for mid-level and senior-level Applied AI Engineering interviews. This is a separate addition to the interview-prep site; do not replace root index.html, notebooks, or flashcards.
@@ -16,7 +16,7 @@ Start with Module 03, AI Agents & Tool Calling, while filling in prerequisites f
 - Review API-specific guidance against vendor documentation as APIs change.
 
 ## Next content
-M03-L02: Typed tool schemas and controller validation; M03-L03: bounded tool-calling loop; M05: evaluation and failure analysis; M06: persistence, retries and idempotency. Include Python lab, tests, failure modes, mid-level exercise, senior design prompt, quizzes and spaced recall.
+M03-L02: implemented with six interactive rejection/approval cases and runnable Python lab. Next M03-L03: bounded tool-calling loop; M05: evaluation and failure analysis; M06: persistence, retries and idempotency. Include Python lab, tests, failure modes, mid-level exercise, senior design prompt, quizzes and spaced recall.
 
 ## Origin
 Content direction and initial lesson based on the AI Engineering Handbook v0.1 archive in the user's Library. This deployed implementation is a compact single-page adaptation, not a byte-for-byte unpacking of the ZIP's original four site assets.
