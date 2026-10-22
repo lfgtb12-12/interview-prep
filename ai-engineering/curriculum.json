@@ -1,5 +1,5 @@
 {
-  "version": "0.2",
+  "version": "0.3",
   "updated": "2026-10-22",
   "goal": "Mid-level and senior-level Applied AI Engineering interviews",
   "tracks": [
@@ -52,6 +52,23 @@
             "resource authorization",
             "approval gates",
             "Python boundary tests"
+          ]
+        },
+        {
+          "id": "M03-L03",
+          "title": "Bounded Agent Loops, Deadlines & Failure Recovery",
+          "minutes": 85,
+          "level": [
+            "mid",
+            "senior"
+          ],
+          "path": "chapter-bounded-loops.html",
+          "topics": [
+            "step and deadline budgets",
+            "no progress detection",
+            "read retry",
+            "ambiguous side effects",
+            "controller tests"
           ]
         }
       ]
