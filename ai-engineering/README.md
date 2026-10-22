@@ -11,7 +11,7 @@ Start with Module 03, AI Agents & Tool Calling, while filling in prerequisites f
 ## Maintenance
 - `curriculum.json` is the planned module/lesson catalog.
 - `index.html` is the browser-only interactive study app and first lesson. New lessons should become separate versioned content files rather than extending a monolithic document indefinitely.
-- Browser `localStorage` is device-specific; use Export/Import on the site to transfer learning progress between browsers. Avoid storing private answers or secrets in notes.
+- Browser `localStorage` is device-specific; use Export/Import on the site to transfer learning progress between browsers. Exports now include M03-L02 quiz and completion data under `lessons.M03-L02`; old backups without the `lessons` field remain importable and preserve any existing M03-L02 progress. Avoid storing private answers or secrets in notes.
 - Keep `HANDOFF.md` current after each milestone; include GitHub commit and verification evidence.
 - Review API-specific guidance against vendor documentation as APIs change.
 
