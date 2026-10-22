@@ -1,0 +1,99 @@
+{
+  "id": "M03-L05",
+  "module": "M03",
+  "title": "Human Approval and Recovery Boundaries",
+  "summary": "A preview specification demonstrating how to teach approval gates and ambiguous side effects safely. This is not a published or fact-checked lesson.",
+  "objectives": [
+    "Describe why an approval gate must be enforced by trusted controller code.",
+    "Distinguish a confirmed failure from an ambiguous side-effect outcome."
+  ],
+  "sections": [
+    {
+      "id": "approval",
+      "title": "Approval gate as state transition",
+      "paragraphs": [
+        "A model can recommend a high-impact action but should not approve its own action. Trusted controller code checks authenticated permissions and a recorded approval before any write.",
+        "A user-facing review step should display the exact action, destination, and data to be sent. An approval must be scoped to this particular operation, not silently reused for another request."
+      ],
+      "diagram": {
+        "type": "state-machine",
+        "nodes": [
+          "DRAFT",
+          "AWAITING_APPROVAL",
+          "APPROVED",
+          "EXECUTED"
+        ],
+        "edges": [
+          [
+            "DRAFT",
+            "AWAITING_APPROVAL"
+          ],
+          [
+            "AWAITING_APPROVAL",
+            "APPROVED"
+          ],
+          [
+            "APPROVED",
+            "EXECUTED"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "unknown",
+      "title": "Ambiguous outcomes",
+      "paragraphs": [
+        "If a remote write times out, the request may have succeeded even though the caller received no acknowledgement. The controller records UNKNOWN and attempts read-only reconciliation before considering a retry.",
+        "Without a provider idempotency guarantee or reliable reconciliation, escalate the outcome for manual handling rather than automatically replaying a potentially duplicated side effect."
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "prompt": "Who enforces approval for a high-impact agent action?",
+      "options": [
+        "The model's reasoning text",
+        "Trusted application/controller code",
+        "The browser CSS",
+        "A generated summary"
+      ],
+      "answer": 1,
+      "explanation": "Approval is a security boundary, so authorization belongs in code outside model output."
+    },
+    {
+      "prompt": "What does UNKNOWN mean after a timed-out external write?",
+      "options": [
+        "The write definitely failed",
+        "The write definitely succeeded",
+        "The outcome could be success or failure",
+        "The tool was never called"
+      ],
+      "answer": 2,
+      "explanation": "A lost acknowledgment leaves a possibly completed side effect; reconciliation is required."
+    },
+    {
+      "prompt": "What is the safest default without replay guarantees?",
+      "options": [
+        "Retry immediately",
+        "Change the operation identifier and resend",
+        "Treat timeout as success",
+        "Stop automatic replay and escalate"
+      ],
+      "answer": 3,
+      "explanation": "An ambiguous side effect cannot be safely repeated absent provider guarantees or reconciliation."
+    }
+  ],
+  "interview": [
+    "Design an approval workflow that withstands stale workers, model prompt injection and changing user permissions.",
+    "Explain an audit trail and recovery strategy for a request that times out after an external payment or email API call."
+  ],
+  "lab": {
+    "title": "Approval gate simulator",
+    "instructions": [
+      "Implement an operation record with status DRAFT, AWAITING_APPROVAL, APPROVED and EXECUTED.",
+      "Reject execution until an authenticated approval with matching operation ID and payload digest exists.",
+      "Write deterministic tests for expired approvals, mismatched hashes and ambiguous tool timeouts."
+    ],
+    "expected": "An unauthorized or ambiguous action never silently executes or replays."
+  }
+}
