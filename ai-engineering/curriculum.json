@@ -1,0 +1,96 @@
+{
+  "version": "0.1",
+  "updated": "2026-10-22",
+  "goal": "Mid-level and senior-level Applied AI Engineering interviews",
+  "tracks": [
+    "Learn",
+    "Build",
+    "Interview",
+    "Get Hired"
+  ],
+  "recommendedStart": "M03-L01",
+  "modules": [
+    {
+      "id": "M01",
+      "title": "LLM Engineering Foundations",
+      "status": "planned",
+      "lessons": []
+    },
+    {
+      "id": "M02",
+      "title": "Python for AI Engineering",
+      "status": "planned",
+      "lessons": []
+    },
+    {
+      "id": "M03",
+      "title": "AI Agents & Tool Calling",
+      "status": "in-progress",
+      "lessons": [
+        {
+          "id": "M03-L01",
+          "title": "What Is an AI Agent?",
+          "minutes": 40,
+          "level": [
+            "mid",
+            "senior"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M04",
+      "title": "RAG & Information Retrieval",
+      "status": "planned",
+      "lessons": []
+    },
+    {
+      "id": "M05",
+      "title": "Evaluation & Experimentation",
+      "status": "planned",
+      "lessons": []
+    },
+    {
+      "id": "M06",
+      "title": "State, Memory & Durable Execution",
+      "status": "planned",
+      "lessons": []
+    },
+    {
+      "id": "M07",
+      "title": "Security, Integrations & Protocols",
+      "status": "planned",
+      "lessons": []
+    },
+    {
+      "id": "M08",
+      "title": "AI Platform & Operations",
+      "status": "planned",
+      "lessons": []
+    },
+    {
+      "id": "M09",
+      "title": "ML Fundamentals & Model Adaptation",
+      "status": "planned",
+      "lessons": []
+    },
+    {
+      "id": "M10",
+      "title": "Advanced Agent Architecture",
+      "status": "planned",
+      "lessons": []
+    },
+    {
+      "id": "M11",
+      "title": "AI System Design",
+      "status": "planned",
+      "lessons": []
+    },
+    {
+      "id": "M12",
+      "title": "Portfolio & Interview Execution",
+      "status": "planned",
+      "lessons": []
+    }
+  ]
+}
