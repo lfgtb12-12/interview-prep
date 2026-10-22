@@ -1,3 +1,10 @@
+## Follow-up 2026-10-22: Chapter 2 progress backup integration
+
+- Inspected `chapter-tool-contracts.html`, curriculum, shared sidebar, dashboard, README and prior handoff. M03-L02 already existed on `main` (file SHA `fe3d7146b313ae2b5708a9d869f879a3caa57c78`); no duplicate chapter created.
+- Updated dashboard export to include M03-L02 completion and quiz answers in `lessons.M03-L02`. Import accepts both old backups (without `lessons`, preserving existing Chapter 2 state) and new backups. No localStorage key was renamed.
+- Commit for dashboard integration: `175653d5c7cf4f85b26d1fd492f4789dfcd85055`.
+- Browser interaction tests remain unverified until independently tested. Next step: consider manifest-driven navigation and a runnable external test harness.
+
 ## Milestone 2026-10-22: M03-L02 lesson added
 
 - Confirmed repository access and write permission on `main`.
