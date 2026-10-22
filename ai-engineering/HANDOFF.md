@@ -1,3 +1,11 @@
+## Milestone 2026-10-22: M03-L04 orchestration and state
+
+- Added `chapter-orchestration.html`: dependency DAG animation, sequential/parallel timeline, read failure, checkpoint/recovery and ambiguous publication scenarios; exercises, architecture discussion, five saved quiz items.
+- Added `orchestration_lab.py` and `test_orchestration.py`, standard-library offline executor and deterministic unit tests. In-memory state is not crash-durable and cannot guarantee atomic cross-service writes; code is educational.
+- Registered lesson 04 in curriculum manifest and shared sidebar; preserved existing storage keys, and extended dashboard progress backup for `lessons.M03-L04`.
+- Public GitHub Pages browser animations and actual CLI test execution require independent verification; do not equate GitHub readback with browser tests.
+- Follow-up: validate all unit tests, import atomicity for invalid backup payloads, mobile drawer, and actual UI interaction; build M03-L05 next.
+
 ## Milestone 2026-10-22: M03-L03 bounded loops and recovery
 
 - Added `chapter-bounded-loops.html` with five animated scenarios, visual time/step/cost budgets, typed retry decisions, standard-library Python controller and three illustrative tests, mid-level exercises, senior-scale architecture prompts and five locally saved quiz questions.
