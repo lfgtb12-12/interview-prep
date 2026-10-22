@@ -1,5 +1,5 @@
 {
-  "version": "0.1",
+  "version": "0.2",
   "updated": "2026-10-22",
   "goal": "Mid-level and senior-level Applied AI Engineering interviews",
   "tracks": [
@@ -34,6 +34,24 @@
           "level": [
             "mid",
             "senior"
+          ],
+          "path": "chapter-agent.html"
+        },
+        {
+          "id": "M03-L02",
+          "title": "Tool Contracts, Validation & Authorization",
+          "minutes": 75,
+          "level": [
+            "mid",
+            "senior"
+          ],
+          "path": "chapter-tool-contracts.html",
+          "topics": [
+            "tool allowlist",
+            "schema validation",
+            "resource authorization",
+            "approval gates",
+            "Python boundary tests"
           ]
         }
       ]
