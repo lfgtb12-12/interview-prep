@@ -6,6 +6,7 @@ from pathlib import Path
 
 from validate import load
 from components import COMPONENT_CSS, COMPONENT_JS
+from widgets import WIDGET_CSS, WIDGET_JS
 
 
 def esc(value):
@@ -29,7 +30,7 @@ pre{white-space:pre-wrap;background:#101a28;border-radius:9px;padding:15px}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 """
 
-STYLE += COMPONENT_CSS
+STYLE += COMPONENT_CSS + WIDGET_CSS
 
 SCRIPT = """
 (() => {
@@ -62,6 +63,9 @@ SCRIPT = """
       store();
     });
   });
+  document.querySelectorAll("[data-widget]").forEach((area) => {
+    mountWidget(area, data.sections[Number(area.dataset.widget)].interactive);
+  });
   document.querySelectorAll("[data-diagram]").forEach((area) => {
     const diagram = data.sections[Number(area.dataset.diagram)].diagram;
     mountSimulation(area, diagram);
@@ -69,7 +73,7 @@ SCRIPT = """
 })();
 """
 
-SCRIPT = COMPONENT_JS + SCRIPT
+SCRIPT = COMPONENT_JS + WIDGET_JS + SCRIPT
 
 
 def render(data):
@@ -92,6 +96,18 @@ def render(data):
             chunks.append('<div class="sim-actions"><button type="button" data-prev>← Previous</button><button type="button" data-next>Next →</button><button type="button" data-reset>Reset</button></div>')
             chunks.append('<p class="sim-caption">Trace transitions individually; highlighted nodes and edges follow the active step.</p>')
             chunks.append('<ol class="sim-step-list" data-steps></ol></div>')
+        if "interactive" in section:
+            widget = section["interactive"]
+            chunks.append(f'<div class="widget" data-widget="{i}" role="group" aria-label="{esc(widget["type"])} interactive exercise">')
+            if widget["type"] == "timeline":
+                chunks.append('<label>Execution mode <select data-strategy><option value="parallel">Parallel</option><option value="sequential">Sequential</option></select></label>')
+                chunks.append('<label>Speed multiplier <input type="range" data-speed min="1" max="4" step="1" value="1"></label><div class="lanes" data-lanes></div>')
+            elif widget["type"] == "retry":
+                chunks.append('<div class="attempts" data-attempts></div><p data-state role="status"></p><button type="button" data-next>Run attempt</button> <button type="button" data-reset>Reset</button>')
+            elif widget["type"] == "parameter":
+                chunks.append(f'<label>{esc(widget["parameter"])} <input type="range" min="{widget["minimum"]}" max="{widget["maximum"]}" value="{widget["minimum"]}" data-value></label>')
+                chunks.append('<button type="button" data-check>Check calculation</button><p data-answer role="status" aria-live="polite"></p>')
+            chunks.append('<p><output aria-live="polite"></output></p></div>')
         chunks.append('</section>')
     chunks.append('<section><h2>Hands-on lab</h2>')
     chunks.append(f'<h3>{esc(data["lab"]["title"])}</h3><ol>')
