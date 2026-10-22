@@ -21,6 +21,21 @@ class BatchCLITests(unittest.TestCase):
             self.assertIn("Generated preview", (out / "m03-l05.html").read_text())
             self.assertEqual(json.loads((out / "quality-report.json").read_text())["structural_errors"], [])
 
+    def test_two_lesson_batch_end_to_end(self):
+        with tempfile.TemporaryDirectory() as temp:
+            second = Path(temp) / "second.json"
+            data = json.loads(EXAMPLE.read_text())
+            data["id"] = "M03-L06"
+            data["title"] = "Recovery and Audit Trail Boundaries"
+            second.write_text(json.dumps(data))
+            out = Path(temp) / "preview"
+            report = build([EXAMPLE, second], out)
+            self.assertEqual(report["lesson_ids"], ["M03-L05", "M03-L06"])
+            self.assertTrue((out / "m03-l05.html").is_file())
+            self.assertTrue((out / "m03-l06.html").is_file())
+            self.assertIn("M03-L06", (out / "index.html").read_text())
+            self.assertEqual(len(report["editorial_warnings"]) > 0, True)
+
     def test_duplicate_ids_prevent_all_writes(self):
         with tempfile.TemporaryDirectory() as temp:
             duplicate = Path(temp) / "copy.json"
