@@ -1,5 +1,5 @@
 {
-  "version": "0.3",
+  "version": "0.4",
   "updated": "2026-10-22",
   "goal": "Mid-level and senior-level Applied AI Engineering interviews",
   "tracks": [
@@ -69,6 +69,24 @@
             "read retry",
             "ambiguous side effects",
             "controller tests"
+          ]
+        },
+        {
+          "id": "M03-L04",
+          "title": "Agent Orchestration, State & Execution Patterns",
+          "minutes": 100,
+          "level": [
+            "mid",
+            "senior"
+          ],
+          "path": "chapter-orchestration.html",
+          "topics": [
+            "dependency DAG",
+            "state transitions",
+            "parallel fan-out and fan-in",
+            "checkpoints and recovery",
+            "unknown side effects",
+            "Python concurrency tests"
           ]
         }
       ]
