@@ -1,0 +1,150 @@
+{
+  "id": "M03-L07",
+  "module": "M03",
+  "title": "Agent Memory, Context and Durable Checkpoints",
+  "summary": "Detailed draft lesson on agent memory, context and durable checkpoints, with operational tradeoffs, failure scenarios, interactive teaching components and a Python-focused engineering exercise.",
+  "objectives": [
+    "Explain important correctness, observability, and reliability boundaries for production AI agents.",
+    "Design a deterministic test plan covering normal operation, adverse conditions and recovery."
+  ],
+  "sections": [
+    {
+      "id": "intro",
+      "title": "Context is not durable state",
+      "paragraphs": [
+        "A model context window contains transient text passed for one invocation; it is not a transactional database. Persist execution state independently with run ID, step identifier, input digest, outcome and references to completed artifacts. When a worker restarts, it must recover committed results and avoid re-running completed side effects. Keep large retrieved documents and reports outside the prompt and pass short references when appropriate.",
+        "Conversation memory is a different concern from execution checkpoints. Memory may summarize stable user preferences or prior facts and requires expiration, provenance and privacy controls. Checkpoints instead record exact execution progress and ownership. Conflating these leads to stale personal facts being treated as authority for executing an action."
+      ],
+      "diagram": {
+        "type": "state-machine",
+        "nodes": [
+          "PENDING",
+          "CLAIMED",
+          "UNKNOWN",
+          "RECONCILED",
+          "DONE"
+        ],
+        "edges": [
+          [
+            "PENDING",
+            "CLAIMED"
+          ],
+          [
+            "CLAIMED",
+            "UNKNOWN"
+          ],
+          [
+            "UNKNOWN",
+            "RECONCILED"
+          ],
+          [
+            "RECONCILED",
+            "DONE"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "deep-dive",
+      "title": "Atomic claims and ownership",
+      "paragraphs": [
+        "Two workers can load the same pending step and both attempt to execute it. Claim work with a conditional write that checks expected status and version, then attach a lease or ownership token. A monotonic fencing token protects subsequent writes to resources that verify that token. Lease expiration grants a new worker permission to try to recover control; it does not prove the old worker's external request failed.",
+        "Persist completed deterministic results and make internal transitions idempotent. Define the exact boundary at which a step becomes committed; a state transition and outbound provider call generally cannot share an atomic transaction. Prefer a stable provider idempotency key and explicit reconciliation for non-transactional external writes."
+      ]
+    },
+    {
+      "id": "operations",
+      "title": "Recovery is not blind replay",
+      "paragraphs": [
+        "Suppose an email provider accepted a send request but the network response timed out. Mark the send UNKNOWN. If the provider supports an operation lookup, query with the stable identifier before deciding the next action. If there is no reliable lookup or deduplication, route to manual reconciliation instead of changing the idempotency key and resending. Retries that make progress for reads can be dangerous for writes.",
+        "The recovery loop needs a finite retry budget, a deadline and a no-new-information exit condition. State machines should include PENDING, CLAIMED, SUCCEEDED, FAILED and UNKNOWN, with explicit allowed transitions. Use an audit trail to explain why a recovered worker advanced or stopped."
+      ],
+      "interactive": {
+        "type": "retry",
+        "maxAttempts": 4,
+        "failuresBeforeSuccess": 2,
+        "outcome": "unknown"
+      }
+    },
+    {
+      "id": "validation",
+      "title": "Testing crash boundaries",
+      "paragraphs": [
+        "Test crash-after-claim, crash-after-local-commit, provider-accepted-but-response-lost and stale worker attempting to finalize. Simulated provider counters should prove that recovering the worker does not silently duplicate writes. An in-memory demonstration is useful for learning but cannot establish crash durability; integration tests must use real persistent storage semantics.",
+        "For senior interviews, discuss checkpoint granularity, cleanup, retention, tenant isolation, poisoned messages, dead-letter queues and the cost of retaining every intermediate result. Explain which guarantees rely on the database and which require provider cooperation.",
+        "One practical test harness injects a failure at every transition boundary and verifies state after restart. Start by recording a run with an idempotency key and version zero. Fail immediately after the claim, then restart and prove the new worker either reclaims safely or waits for the lease. Repeat after a simulated provider acceptance with a dropped acknowledgement: the recovered worker must query the provider, not blindly replay. Finally try to finalize from a stale worker whose lease has already been superseded. Assert both durable status and the provider's effect count, because a passing status assertion alone could hide a duplicate side effect. Document that these mocks cannot prove external exactly-once delivery."
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "prompt": "Which data best isolates the first failing stage?",
+      "options": [
+        "Only final response text",
+        "Counts and evidence IDs at each stage",
+        "CSS colors",
+        "Total number of deployments"
+      ],
+      "answer": 1,
+      "explanation": "Stage-level counts and evidence references locate where information was lost."
+    },
+    {
+      "prompt": "What does a successful HTTP response establish?",
+      "options": [
+        "Answer quality is perfect",
+        "The transport request completed, not necessarily the task",
+        "No tools failed internally",
+        "All citations are correct"
+      ],
+      "answer": 1,
+      "explanation": "Successful transport does not prove correctness, coverage or policy compliance."
+    },
+    {
+      "prompt": "What is safest when a write outcome is UNKNOWN?",
+      "options": [
+        "Use a new request ID and repeat",
+        "Reconcile using stable IDs before replay",
+        "Erase its durable record",
+        "Ask the model to guess"
+      ],
+      "answer": 1,
+      "explanation": "Unknown external effects require provider evidence or escalation before further writes."
+    },
+    {
+      "prompt": "Which claim about checkpointing is correct?",
+      "options": [
+        "Model context is transactional storage",
+        "Durable records can support step recovery",
+        "A new worker cancels old API calls",
+        "Local variables survive restarts"
+      ],
+      "answer": 1,
+      "explanation": "Durably committed state permits recovery while model context and process memory do not."
+    },
+    {
+      "prompt": "Why test rare critical errors separately?",
+      "options": [
+        "Averages can conceal high-impact regressions",
+        "All failures are equally harmful",
+        "Testing latency is never useful",
+        "A higher token count fixes them"
+      ],
+      "answer": 0,
+      "explanation": "Aggregate means can mask infrequent severe omissions and unsafe effects."
+    }
+  ],
+  "interview": [
+    "Design a production architecture for this lesson, including durability, failure ownership, operational observability, and tenant separation.",
+    "Explain which guarantees come from trusted application code versus model behavior and third-party API contracts.",
+    "Develop measurable rollout criteria and failure-injection tests for rare but high-impact incidents."
+  ],
+  "lab": {
+    "title": "Deterministic Python controller lab",
+    "instructions": [
+      "Write a Python finite-state controller with a durable-state abstraction and a simulated provider. Add versioned conditional claims, stable idempotency keys, and UNKNOWN reconciliation. Write deterministic tests for stale workers, expired leases, duplicate dispatch and acknowledgement loss.",
+      "Use standard-library unittest and include separate assertions for happy path, failure path, and ambiguous outcomes.",
+      "Record an evidence-based expected result and keep external integrations mocked until reliability is demonstrated."
+    ],
+    "expected": "A deterministic test suite distinguishes valid completion from missing evidence, ambiguous results, and failed recovery."
+  }
+}

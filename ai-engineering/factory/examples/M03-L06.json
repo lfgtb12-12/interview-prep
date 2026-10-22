@@ -1,0 +1,163 @@
+{
+  "id": "M03-L06",
+  "module": "M03",
+  "title": "Agent Observability and Evaluation",
+  "summary": "Detailed draft lesson on agent observability and evaluation, with operational tradeoffs, failure scenarios, interactive teaching components and a Python-focused engineering exercise.",
+  "objectives": [
+    "Explain important correctness, observability, and reliability boundaries for production AI agents.",
+    "Design a deterministic test plan covering normal operation, adverse conditions and recovery."
+  ],
+  "sections": [
+    {
+      "id": "intro",
+      "title": "Traces and causal debugging",
+      "paragraphs": [
+        "A single successful HTTP response does not explain how an agent reached its answer. Assign a stable run identifier and trace the planning call, schema validation, tool selection, tool execution and answer evaluation as distinct spans. Each span should carry duration, attempt number, outcome, versioned policy identifier and useful evidence references. Correlation should cross process boundaries without placing credentials or private documents in logs. Track which retrieved records were offered to the model and which were cited in the final result. Debugging then becomes a question of finding the earliest stage where required information disappeared, rather than guessing from the prose of the response.",
+        "If ten incidents exist but the generated report mentions seven, count items at each pipeline boundary. Seven retrieved records indicate a collection or filter problem; ten retrieved but seven summarized points toward synthesis, truncation or an underspecified acceptance test. Instrument both pathways before rewriting prompts. Protect sensitive inputs with redaction, retention limits and restricted access to any debugging artifact."
+      ],
+      "diagram": {
+        "type": "state-machine",
+        "nodes": [
+          "INPUT",
+          "RETRIEVAL",
+          "MODEL",
+          "EVAL",
+          "OUTPUT"
+        ],
+        "edges": [
+          [
+            "INPUT",
+            "RETRIEVAL"
+          ],
+          [
+            "RETRIEVAL",
+            "MODEL"
+          ],
+          [
+            "MODEL",
+            "EVAL"
+          ],
+          [
+            "EVAL",
+            "OUTPUT"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "deep-dive",
+      "title": "Quality metrics are separate from uptime",
+      "paragraphs": [
+        "Successful execution is not the same as task success. Track request success, deadline failures, p95 latency, tool-call costs and retry volume alongside groundedness, completeness and explicit task acceptance. Groundedness asks whether each checkable claim is supported by supplied evidence. Completeness asks whether all required aspects were covered. An answer with one accurate sentence can be fully grounded yet miss the main user request. Treat these dimensions separately rather than collapsing them into one arbitrary quality number.",
+        "Build scenario-based evaluation sets with difficult examples: missing evidence, conflicting documents, prompt injection in retrieved pages, slow APIs, uncertain writes and overlong inputs. A model-based evaluator can help at scale, but calibrate it against human-reviewed examples and review disagreement. Do not claim that a high score proves factual correctness when labels are weak or evidence itself is wrong."
+      ]
+    },
+    {
+      "id": "operations",
+      "title": "Budgets and incident operations",
+      "paragraphs": [
+        "An agent with a ten-second deadline cannot retry each tool for ten seconds independently. Pass remaining global time downstream, reserve final response time and cap tool rounds and concurrency. Retry safe transient reads using bounded backoff and jitter; do not automatically replay an uncertain write. Measure deadline-exhausted outcomes explicitly. Under load, admission limits protect the service from runaway agent loops and cascading provider throttling.",
+        "Define user-relevant service-level objectives, for example completed grounded reports within a fixed time window. Alert on high-severity omissions and unresolved UNKNOWN operations, not merely server crashes. Every alert should point to representative run IDs, the affected release, and the stage that failed, so the on-call engineer has a reproducible starting point."
+      ],
+      "interactive": {
+        "type": "timeline",
+        "tasks": [
+          {
+            "name": "Search",
+            "start": 0,
+            "duration": 4
+          },
+          {
+            "name": "Database",
+            "start": 0,
+            "duration": 3
+          },
+          {
+            "name": "Synthesis",
+            "start": 4,
+            "duration": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "validation",
+      "title": "Shadow runs and promotion gates",
+      "paragraphs": [
+        "Before deploying a new model or prompt, replay the same evaluation inputs against the current baseline and candidate version. Compare coverage, hallucination rate, unsafe tool selection, latency distribution, token usage and failure-category counts. A lower median latency is not a success if rare critical omissions double. Preserve evidence snapshots and model parameters so differences are interpretable.",
+        "An operational checklist needs clear rollback thresholds. Review high-impact failures individually even if an average score improved. Label uncertainty openly: an evaluator is one component of an evidence-based release process, not the authority that defines truth."
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "prompt": "Which data best isolates the first failing stage?",
+      "options": [
+        "Only final response text",
+        "Counts and evidence IDs at each stage",
+        "CSS colors",
+        "Total number of deployments"
+      ],
+      "answer": 1,
+      "explanation": "Stage-level counts and evidence references locate where information was lost."
+    },
+    {
+      "prompt": "What does a successful HTTP response establish?",
+      "options": [
+        "Answer quality is perfect",
+        "The transport request completed, not necessarily the task",
+        "No tools failed internally",
+        "All citations are correct"
+      ],
+      "answer": 1,
+      "explanation": "Successful transport does not prove correctness, coverage or policy compliance."
+    },
+    {
+      "prompt": "What is safest when a write outcome is UNKNOWN?",
+      "options": [
+        "Use a new request ID and repeat",
+        "Reconcile using stable IDs before replay",
+        "Erase its durable record",
+        "Ask the model to guess"
+      ],
+      "answer": 1,
+      "explanation": "Unknown external effects require provider evidence or escalation before further writes."
+    },
+    {
+      "prompt": "Which claim about checkpointing is correct?",
+      "options": [
+        "Model context is transactional storage",
+        "Durable records can support step recovery",
+        "A new worker cancels old API calls",
+        "Local variables survive restarts"
+      ],
+      "answer": 1,
+      "explanation": "Durably committed state permits recovery while model context and process memory do not."
+    },
+    {
+      "prompt": "Why test rare critical errors separately?",
+      "options": [
+        "Averages can conceal high-impact regressions",
+        "All failures are equally harmful",
+        "Testing latency is never useful",
+        "A higher token count fixes them"
+      ],
+      "answer": 0,
+      "explanation": "Aggregate means can mask infrequent severe omissions and unsafe effects."
+    }
+  ],
+  "interview": [
+    "Design a production architecture for this lesson, including durability, failure ownership, operational observability, and tenant separation.",
+    "Explain which guarantees come from trusted application code versus model behavior and third-party API contracts.",
+    "Develop measurable rollout criteria and failure-injection tests for rare but high-impact incidents."
+  ],
+  "lab": {
+    "title": "Deterministic Python controller lab",
+    "instructions": [
+      "Implement a trace recorder and evaluator for a deterministic report agent. Create ten mock incidents, drop three at retrieval in one test and omit two during synthesis in another. Store stage counts and source IDs, assert coverage and groundedness separately, and test deadline exhaustion.",
+      "Use standard-library unittest and include separate assertions for happy path, failure path, and ambiguous outcomes.",
+      "Record an evidence-based expected result and keep external integrations mocked until reliability is demonstrated."
+    ],
+    "expected": "A deterministic test suite distinguishes valid completion from missing evidence, ambiguous results, and failed recovery."
+  }
+}
