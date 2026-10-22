@@ -1,3 +1,11 @@
+## Milestone 2026-10-22: M03-L03 bounded loops and recovery
+
+- Added `chapter-bounded-loops.html` with five animated scenarios, visual time/step/cost budgets, typed retry decisions, standard-library Python controller and three illustrative tests, mid-level exercises, senior-scale architecture prompts and five locally saved quiz questions.
+- Registered M03-L03 in `curriculum.json` version 0.3, added a sidebar link, extended dashboard chapter links and included M03-L03 in local progress export/import without changing earlier keys.
+- New lesson commit `f0ef1b87064f65664cc068b1f41a6a3f2a388da6`; manifest `f0dac9896527870a4ff1e7297cb76f7c5804ff61`; navigation `f8a56702d1d195ac14bd0367c6e75054af6f4f9c`; dashboard `7e8425081b20b410d63541396d87c2ec6e9d18ce`.
+- Scope: deterministic educational simulator, not a production provider integration. JavaScript animations and local-storage transfer still require live browser/manual verification; verify Python example execution separately.
+- Root interview-prep homepage and existing lesson files unchanged.
+
 ## Follow-up 2026-10-22: Chapter 2 progress backup integration
 
 - Inspected `chapter-tool-contracts.html`, curriculum, shared sidebar, dashboard, README and prior handoff. M03-L02 already existed on `main` (file SHA `fe3d7146b313ae2b5708a9d869f879a3caa57c78`); no duplicate chapter created.
