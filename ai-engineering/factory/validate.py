@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 
 FIELDS = {"id", "module", "title", "summary", "objectives", "sections", "quiz", "interview", "lab"}
-SECTION = {"id", "title", "paragraphs", "diagram"}
+SECTION = {"id", "title", "paragraphs", "diagram", "interactive"}
 QUESTION = {"prompt", "options", "answer", "explanation"}
 LAB = {"title", "instructions", "expected"}
 DIAGRAM = {"type", "nodes", "edges"}
@@ -49,13 +49,53 @@ def validate(data):
     ids = set()
     for i, section in enumerate(sections):
         p = f"sections[{i}]"
-        keys(section, p, SECTION - {"diagram"}, SECTION)
+        keys(section, p, SECTION - {"diagram", "interactive"}, SECTION)
         sid = section["id"]
         if not isinstance(sid, str) or not re.fullmatch(r"[a-z][a-z0-9-]*", sid) or sid in ids:
             raise ValueError(f"{p}.id: invalid or duplicate")
         ids.add(sid)
         check_text(section["title"], f"{p}.title", 5)
         check_strings(section["paragraphs"], f"{p}.paragraphs", 30)
+        if "interactive" in section:
+            w = section["interactive"]
+            if not isinstance(w, dict) or w.get("type") not in ("timeline", "retry", "parameter"):
+                raise ValueError(f"{p}.interactive: unknown widget type")
+            kind = w["type"]
+            required = {
+                "timeline": {"type", "tasks"},
+                "retry": {"type", "maxAttempts", "failuresBeforeSuccess", "outcome"},
+                "parameter": {"type", "parameter", "minimum", "maximum", "base", "factor", "target", "explanation"},
+            }[kind]
+            keys(w, f"{p}.interactive", required)
+            if kind == "timeline":
+                tasks = w["tasks"]
+                if not isinstance(tasks, list) or not 2 <= len(tasks) <= 8:
+                    raise ValueError(f"{p}.interactive.tasks: expected 2–8 tasks")
+                names = set()
+                for task in tasks:
+                    keys(task, f"{p}.task", {"name", "start", "duration"})
+                    check_text(task["name"], f"{p}.task.name")
+                    if task["name"] in names:
+                        raise ValueError(f"{p}.interactive.tasks: duplicate name")
+                    names.add(task["name"])
+                    for key in ("start", "duration"):
+                        if type(task[key]) not in (int, float) or not 0 <= task[key] <= 1000 or (key == "duration" and task[key] == 0):
+                            raise ValueError(f"{p}.task.{key}: invalid duration")
+            elif kind == "retry":
+                if type(w["maxAttempts"]) is not int or not 1 <= w["maxAttempts"] <= 10:
+                    raise ValueError(f"{p}.interactive.maxAttempts: invalid")
+                if type(w["failuresBeforeSuccess"]) is not int or not 0 <= w["failuresBeforeSuccess"] < w["maxAttempts"]:
+                    raise ValueError(f"{p}.interactive.failuresBeforeSuccess: invalid")
+                if w["outcome"] not in ("transient", "unknown"):
+                    raise ValueError(f"{p}.interactive.outcome: invalid")
+            else:
+                check_text(w["parameter"], f"{p}.interactive.parameter")
+                check_text(w["explanation"], f"{p}.interactive.explanation", 20)
+                for key in ("minimum", "maximum", "base", "factor", "target"):
+                    if type(w[key]) not in (int, float) or not -100000 <= w[key] <= 100000:
+                        raise ValueError(f"{p}.interactive.{key}: invalid numeric value")
+                if not w["minimum"] < w["maximum"] or w["maximum"] - w["minimum"] > 1000:
+                    raise ValueError(f"{p}.interactive: invalid input range")
         if "diagram" in section:
             d = section["diagram"]
             keys(d, f"{p}.diagram", DIAGRAM)
