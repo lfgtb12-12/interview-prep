@@ -1,0 +1,193 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>M03-L04 · Agent Orchestration, State & Execution Patterns</title><link rel="stylesheet" href="./navigation.css"><style>:root{color-scheme:dark;--bg:#0e1927;--panel:#192a3d;--line:#405a70;--mint:#8ce5d1;--amber:#ffd18a}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#eff7ff;font:16px/1.7 system-ui,sans-serif}main{max-width:1030px;margin:auto;padding:20px 24px 90px}header{background:#14263b;border-bottom:1px solid var(--line);padding:16px}header>div{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}a{color:var(--mint)}section{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:24px;margin:20px 0}h1{font-size:clamp(30px,5vw,48px);line-height:1.15}h2{font-size:27px;margin-top:0}.lead{font-size:20px;color:#d7e8f5}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}.tile{padding:16px;border:1px solid var(--line);background:#21384c;border-radius:12px}.note{padding:15px;border-left:4px solid var(--amber);background:#304354;border-radius:8px}button,select{font:inherit;background:#28646d;color:white;border:1px solid #65b2b0;padding:9px 13px;border-radius:9px;cursor:pointer;margin:4px}button:disabled{opacity:.4}button:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid var(--amber);outline-offset:2px}pre{overflow:auto;padding:16px;background:#071722;border:1px solid var(--line);border-radius:11px}code{font:13px/1.55 ui-monospace,monospace}details,fieldset{border:1px solid var(--line);border-radius:10px;padding:12px;margin:12px 0}summary{cursor:pointer;font-weight:bold}.diagram{overflow:auto;background:#0d2333;border:1px solid var(--line);border-radius:13px;padding:12px}svg{min-width:680px;width:100%;height:auto}.node{fill:#2c4359;stroke:#7a92a5;stroke-width:2;transition:fill .3s}.node.running{fill:#82581e;stroke:#ffd18a}.node.succeeded{fill:#176857;stroke:#b5ffe6}.node.failed{fill:#7c3140;stroke:#ffd0d1}.node.unknown{fill:#713e80;stroke:#ebc5ff}.edge{stroke:#849bab;stroke-width:3;fill:none;stroke-dasharray:9 7}.edge.active{stroke:#a9f3df;animation:flow 1s linear infinite}@keyframes flow{to{stroke-dashoffset:-32}}svg text{fill:white;font:15px system-ui;text-anchor:middle;pointer-events:none}.timeline{display:grid;grid-template-columns:130px 1fr;gap:9px;margin:14px 0}.lane{border:1px solid var(--line);border-radius:8px;min-height:35px;background:#102637;position:relative}.block{height:27px;position:absolute;top:3px;border-radius:6px;background:#347e74;transition:all .4s;padding:2px 7px;font:12px system-ui;white-space:nowrap;overflow:hidden}.block.failure{background:#9d4854}#log{white-space:pre-wrap;background:#071722;min-height:90px;padding:14px;border-radius:10px;font:13px/1.6 ui-monospace,monospace}.muted{color:#c0d3e5}label{display:block;margin:8px 0}@media(max-width:700px){main{padding:10px}section{padding:16px}}@media(prefers-reduced-motion:reduce){.edge.active{animation:none}.node,.block{transition:none}}</style></head><body><header><div><strong>AI ENGINEERING HANDBOOK · M03-L04</strong><nav><a href="./chapter-bounded-loops.html">← Lesson 03</a> · <a href="./">Dashboard</a> · <a href="./#quiz">Practice</a></nav></div></header><main>
+<section><small>Learn · Visualize · Code · Debug · Interview</small><h1>Agent Orchestration, State & Execution Patterns</h1><p class="lead">An agent is more than a loop: it is a dependency-aware execution system that knows what ran, what is safe to repeat, and what must wait.</p><p>A report assistant must retrieve orders and inventory, synthesize evidence, then publish a report. Can the two lookups overlap? What if a worker crashes after publishing but before saving success? Who decides which step runs next—the model or the controller?</p><div class="note"><strong>Memory hook:</strong> The graph defines dependencies. The state machine defines legality. Checkpoints define recovery. Trusted code enforces all three.</div></section>
+<section><h2>1. Orchestration vs model reasoning</h2><div class="grid"><article class="tile"><h3>Workflow</h3><p>Code predefines each dependency. Prefer deterministic orchestration for stable business processes and auditability.</p></article><article class="tile"><h3>Agent-directed</h3><p>A model suggests actions or branches, but the controller checks allowed transitions and budgets before execution.</p></article><article class="tile"><h3>Hybrid</h3><p>A durable graph establishes mandatory gates; model nodes decide bounded substeps, such as query refinement.</p></article></div><p>A graph is a directed set of task dependencies. A DAG has no dependency cycles; cycles for iterative reasoning must be explicit, bounded controller transitions rather than accidental prerequisite loops. Schedulers compute the <em>ready set</em>: steps whose predecessors are all SUCCEEDED. Fan-out launches independent work; fan-in waits for required results.</p><p><strong>Interview distinction:</strong> parallelism reduces critical-path latency, not necessarily total work or cost. More concurrency means higher provider load, bigger rate-limit risk and harder cancellation.</p></section>
+<section id="sim"><h2>2. Interactive DAG execution simulator</h2><p>Choose an execution strategy and a failure mode. Advance step by step or play the trace. The graph status, animated active edges, per-task timeline, and event log remain synchronized. Simulation is deterministic; no providers are called.</p><label for="strategy">Strategy <select id="strategy"><option value="parallel">Parallel (2 read slots)</option><option value="sequential">Sequential (1 slot)</option></select></label><label for="scenario">Scenario <select id="scenario"><option value="good">Successful run</option><option value="readfail">Inventory read fails; downstream blocked</option><option value="recovery">Worker restarts after checkpoint</option><option value="unknown">Publish acknowledgement lost (UNKNOWN)</option></select></label><p><button id="prev">← Previous</button><button id="next">Next event →</button><button id="play">Auto play</button><button id="restart">Reset</button></p><div class="diagram"><svg viewBox="0 0 875 310" role="img" aria-label="Dependency graph: orders and inventory join synthesis; synthesis precedes publication"><path id="e-orders" class="edge" d="M225 90 L350 165"/><path id="e-inventory" class="edge" d="M225 235 L350 165"/><path id="e-synthesize" class="edge" d="M525 165 H650"/><g><rect id="n-orders" class="node" x="50" y="50" width="175" height="80" rx="12"/><text x="137" y="85">orders</text><text id="s-orders" x="137" y="109">PENDING</text></g><g><rect id="n-inventory" class="node" x="50" y="195" width="175" height="80" rx="12"/><text x="137" y="230">inventory</text><text id="s-inventory" x="137" y="254">PENDING</text></g><g><rect id="n-synthesize" class="node" x="350" y="125" width="175" height="80" rx="12"/><text x="437" y="160">synthesize</text><text id="s-synthesize" x="437" y="184">PENDING</text></g><g><rect id="n-publish" class="node" x="650" y="125" width="175" height="80" rx="12"/><text x="737" y="160">publish</text><text id="s-publish" x="737" y="184">PENDING</text></g></svg></div><div class="timeline" id="timeline" aria-label="Execution timeline"></div><p><strong id="event"></strong> <span id="counter" class="muted"></span></p><div id="log" role="status" aria-live="polite"></div><div class="note" id="lesson"></div></section>
+<section><h2>3. Durable state and legal transitions</h2><p>A step is not just a Boolean “done”. Represent <code>PENDING → RUNNING → SUCCEEDED</code>, with alternative transitions to <code>FAILED</code> or <code>UNKNOWN</code>. <code>FAILED</code> is known non-success (for example, deterministic validation failure); <code>UNKNOWN</code> means execution may have happened but confirmation is missing. A retry decision depends on operation semantics and provider guarantees.</p><div class="grid"><div class="tile"><h3>Checkpoint</h3><p>Persist normalized inputs, output references, status, attempt, timestamp and operation key. Commit completed output and SUCCEEDED atomically where possible.</p></div><div class="tile"><h3>Claim</h3><p>Workers acquire ownership with conditional writes, leases and fencing tokens to stop stale workers modifying durable state.</p></div><div class="tile"><h3>Reconcile</h3><p>After a crash, reload state; skip successful steps. Before repeating side effects, query the provider by stable operation key or place UNKNOWN into a review queue.</p></div></div><p>Side effects require additional design: a database checkpoint alone cannot atomically commit an external email send. Use provider-enforced idempotency where available, or reconcile external status. If neither guarantee exists, do not automatically replay an ambiguous write.</p></section>
+<section><h2>4. Scheduling rules and tradeoffs</h2><div class="grid"><article class="tile"><h3>Sequential</h3><p>Simple trace and deterministic ordering; critical path approximates sum of task times. Good when dependencies truly form a chain.</p></article><article class="tile"><h3>Parallel fan-out</h3><p>Independent reads overlap. Bound each tenant and provider; pass deadlines into every worker and handle partial results explicitly.</p></article><article class="tile"><h3>Join policy</h3><p>ALL waits for all required evidence. QUORUM can return useful partial results only when the business contract permits it, with missing evidence labeled.</p></article><article class="tile"><h3>Recovery</h3><p>Durable status, deterministic keys and idempotent adapters allow a new worker to continue safely; unconfirmed external writes require reconciliation.</p></article></div><p>For order lookup 3 seconds and inventory lookup 4 seconds, synthesis 2 seconds, publication 1 second: sequential latency is about 10 seconds; independent parallel reads yield about 7 seconds before overhead. Maximum possible gain is bounded by the longest dependency chain (critical path). Real systems include queue wait, throttling and serialization.</p></section>
+<section><h2>5. Python lab: dependency-safe executor</h2><p>Save the following as <code>orchestration_lab.py</code> and run <code>python orchestration_lab.py</code>. This standard-library example validates the graph, executes independent tasks concurrently, uses a teaching-only in-memory checkpoint and blocks ambiguous writes. <strong>It is not a crash-safe production scheduler:</strong> a real implementation must store status durably with atomic conditional transitions before dispatch and on completion.</p><pre><code>"""Offline DAG runner. Python 3.11+; no external packages."""
+from dataclasses import dataclass, field
+from concurrent.futures import ThreadPoolExecutor, wait, FIRST_COMPLETED
+from typing import Callable
+
+@dataclass(frozen=True)
+class Task:
+    deps: tuple[str, ...]
+    fn: Callable[[dict], object]
+    side_effect: bool = False
+
+@dataclass
+class Store:
+    # Teaching store: substitute transactional DB for production.
+    status: dict[str, str] = field(default_factory=dict)
+    result: dict[str, object] = field(default_factory=dict)
+
+class UnknownOutcome(RuntimeError):
+    pass
+
+def validate(tasks: dict[str, Task]) -&gt; None:
+    for name, task in tasks.items():
+        if name in task.deps or any(d not in tasks for d in task.deps):
+            raise ValueError("invalid dependency")
+    seen, active = set(), set()
+    def visit(n):
+        if n in active:
+            raise ValueError("cycle")
+        if n in seen:
+            return
+        active.add(n)
+        for d in tasks[n].deps:
+            visit(d)
+        active.remove(n)
+        seen.add(n)
+    for name in tasks:
+        visit(name)
+
+def run(tasks: dict[str, Task], store: Store, workers=2):
+    validate(tasks)
+    if workers &lt; 1:
+        raise ValueError("workers must be positive")
+    pending = set(tasks) - {n for n in tasks if store.status.get(n) == "SUCCEEDED"}
+    running = {}
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        while pending or running:
+            # Snapshot immutable dependency results before task submission.
+            ready = sorted(n for n in pending if all(store.status.get(d) == "SUCCEEDED" for d in tasks[n].deps))
+            for n in ready[:max(0, workers - len(running))]:
+                if tasks[n].side_effect and store.status.get(n) in ("RUNNING", "UNKNOWN"):
+                    raise UnknownOutcome(n + ": reconcile before replay")
+                store.status[n] = "RUNNING"  # production: durable CAS before submission
+                inputs = {d: store.result[d] for d in tasks[n].deps}
+                running[pool.submit(tasks[n].fn, inputs)] = n
+                pending.remove(n)
+            if not running:
+                raise RuntimeError("blocked by failed/unknown dependency")
+            done, _ = wait(running, return_when=FIRST_COMPLETED)
+            for future in done:
+                n = running.pop(future)
+                try:
+                    value = future.result()
+                except UnknownOutcome:
+                    store.status[n] = "UNKNOWN"
+                except Exception:
+                    store.status[n] = "FAILED"
+                else:
+                    store.result[n] = value  # production: atomic result + status commit
+                    store.status[n] = "SUCCEEDED"
+            if any(store.status.get(n) in ("FAILED", "UNKNOWN") for n in tasks):
+                # In-flight reads may finish; do not dispatch more downstream tasks.
+                if running:
+                    for future in running: future.cancel()
+                raise RuntimeError("workflow stopped: inspect checkpoint")
+    return store.result
+
+def demo():
+    tasks = {
+        "orders": Task((), lambda _: ["o1", "o2"]),
+        "inventory": Task((), lambda _: {"available": True}),
+        "synthesize": Task(("orders", "inventory"), lambda v: {"evidence": v}),
+        "report": Task(("synthesize",), lambda v: "report-ready"),
+    }
+    s = Store()
+    assert run(tasks, s)["report"] == "report-ready"
+    assert run(tasks, s)["report"] == "report-ready"  # completed steps skipped
+    assert all(v == "SUCCEEDED" for v in s.status.values())
+
+if __name__ == "__main__":
+    demo()
+    print("All assertions passed")
+</code></pre><h3>Deterministic unit tests</h3><p>Save as <code>test_orchestration.py</code>, then run <code>python -m unittest -v test_orchestration.py</code>. No external API or LLM required.</p><pre><code>"""Save alongside orchestration_lab.py; python -m unittest -v test_orchestration.py"""
+import unittest
+from orchestration_lab import Task, Store, UnknownOutcome, run
+
+class TestOrchestration(unittest.TestCase):
+    def test_dependencies_and_resume(self):
+        calls = []
+        tasks = {
+            "a": Task((), lambda _: calls.append("a") or 3),
+            "b": Task(("a",), lambda x: calls.append("b") or x["a"] * 2),
+        }
+        store = Store()
+        self.assertEqual(run(tasks, store)["b"], 6)
+        run(tasks, store)
+        self.assertEqual(calls, ["a", "b"])
+
+    def test_cycle_rejected(self):
+        with self.assertRaises(ValueError):
+            run({"a": Task(("b",), lambda _: 1),
+                 "b": Task(("a",), lambda _: 2)}, Store())
+
+    def test_unknown_write_never_replayed(self):
+        calls = []
+        def send(_):
+            calls.append("sent")
+            raise UnknownOutcome("acknowledgement lost")
+        tasks = {"send": Task((), send, side_effect=True)}
+        store = Store()
+        with self.assertRaises(RuntimeError):
+            run(tasks, store)
+        self.assertEqual(store.status["send"], "UNKNOWN")
+        with self.assertRaises(UnknownOutcome):
+            run(tasks, store)
+        self.assertEqual(calls, ["sent"])
+
+    def test_failure_blocks_downstream(self):
+        calls = []
+        def fail(_): raise ValueError("provider error")
+        tasks = {"read": Task((), fail), "publish": Task(("read",), lambda _: calls.append(1))}
+        with self.assertRaises(RuntimeError):
+            run(tasks, Store())
+        self.assertFalse(calls)
+
+if __name__ == "__main__":
+    unittest.main()
+</code></pre><p class="muted">Important nuance: Python threads may finish already-running work after an exception even if cancellation was requested. This teaching runner prevents downstream dispatch after a detected failure, but in-flight work is not a substitute for distributed cancellation, and the completion-commit is not atomic.</p></section>
+<section><h2>6. Mid-level coding and debugging exercises</h2><h3>Exercise A · topological scheduling</h3><p>Add a new <code>risk_check</code> dependency before publication. Explain why launching publish when synthesis is RUNNING violates the invariant. Write a test showing that publish does not run when risk_check fails.</p><details><summary>Solution and invariant</summary><p>Set <code>risk_check = Task(("synthesize",), ...)</code>; set <code>report = Task(("risk_check",), ...)</code>. Readiness requires <code>all(store.status.get(dep) == "SUCCEEDED" for dep in tasks[name].deps)</code>. Do not use “not failed” because PENDING and RUNNING are not successful evidence.</p></details><h3>Exercise B · recover a stale RUNNING read</h3><p>A worker dies while fetching inventory. The new worker observes RUNNING. What must change before this safe read can resume?</p><details><summary>Reference approach</summary><p>Use an expiring lease with ownership generation/fencing and a conditional transition to reclaim the step. A read-only or idempotent query may be retried within budgets after ownership recovery. Persist a fresh attempt record; never let an old worker commit stale results.</p></details><h3>Debugging puzzle · publish twice</h3><p>Production timeline: worker A sends publish; provider commits; response times out; A crashes. Worker B sees status RUNNING and issues publish again. Identify the design defect and safe response.</p><details><summary>Solution</summary><p>The local checkpoint could not prove remote failure. Treat outcome as UNKNOWN, check provider status using the same operation key, and only replay if provider enforces deduplication or non-execution is proven. Lease fencing protects internal updates, not external sends.</p></details></section>
+<section><h2>7. Senior-level architecture interview</h2><p><strong>Prompt:</strong> Design a multi-tenant research agent processing 10,000 runs/hour. Each run fans out to three retrieval providers and one evaluator, and may publish a report. End-to-end deadline 10 minutes; duplicate publication is unacceptable.</p><div class="grid"><article class="tile"><h3>API & admission</h3><p>Accept request ID and tenant ID; enforce quotas and bounded queue length; measure deadline including queue wait.</p></article><article class="tile"><h3>Execution</h3><p>Durable coordinator; dependency-ready scheduler; provider-specific rate limits; fair tenant scheduling; explicit terminal status.</p></article><article class="tile"><h3>State & recovery</h3><p>Transactional step records, immutable output references, unique operation IDs, versioned compare-and-swap and reconciler.</p></article><article class="tile"><h3>Observability & evals</h3><p>Correlate run/step IDs; p95 latency, provider throttling, checkpoint failures, unknown writes, evidence coverage and cost.</p></article></div><details><summary>Senior follow-up: AWS implementation</summary><p>For a well-defined finite graph, Step Functions Standard plus Lambda/ECS workers and DynamoDB status can be a practical choice; Map/Parallel states coordinate bounded fan-out. SQS buffers admission, with per-tenant throttling. A custom worker coordinator is justified for highly dynamic graphs but adds scheduler complexity. Keep external publish behind an adapter with a durable idempotency key and reconciliation path. IAM controls service-to-service authorization; do not use it to infer the model is authorized to publish user-specific content.</p></details><details><summary>Senior follow-up: consistency and failure isolation</summary><p>Choose step output immutability, transactionally bind the result URI to SUCCEEDED, and only release dependents after commit. Allow independent branches to finish but label incomplete evidence. Retry safe reads with jitter and global deadlines; circuit-break overloaded providers. Never let speculative parallel branches bypass approval or access checks.</p></details></section>
+<section><h2>8. Active recall and quiz</h2><div id="quiz"></div><p id="score"></p><button id="clear">Reset quiz</button><p><label><input id="done" type="checkbox"> I can design and debug a checkpointed dependency scheduler.</label></p><p id="saved" class="muted"></p><p><a href="./chapter-bounded-loops.html">Previous lesson</a> · <a href="./">Dashboard</a></p></section></main><script>
+const $=id=>document.getElementById(id);
+const names=["orders","inventory","synthesize","publish"];
+function build(){
+ const parallel=$("strategy").value==="parallel", mode=$("scenario").value,events=[];
+ const push=(title,states,detail,slots)=>events.push({title,states,detail,slots});
+ const P="PENDING",R="RUNNING",S="SUCCEEDED",F="FAILED",U="UNKNOWN";
+ push("Admitted",{orders:P,inventory:P,synthesize:P,publish:P},"Validated graph; no task has run.",[]);
+ if(parallel){
+ push("Fan-out",{orders:R,inventory:R,synthesize:P,publish:P},"Orders and inventory are independent, so both read slots can start.",[["orders",0,2],["inventory",0,3]]);
+ push("Orders checkpoint",{orders:S,inventory:R,synthesize:P,publish:P},"Orders result committed; synthesis is still blocked on inventory.",[["orders",0,2],["inventory",0,3]]);
+ }else{
+ push("Orders starts",{orders:R,inventory:P,synthesize:P,publish:P},"Single worker dispatches first ready task.",[["orders",0,2]]);
+ push("Orders checkpoint",{orders:S,inventory:P,synthesize:P,publish:P},"Commit completed orders before starting inventory.",[["orders",0,2]]);
+ push("Inventory starts",{orders:S,inventory:R,synthesize:P,publish:P},"Only one active execution slot.",[["orders",0,2],["inventory",2,3]]);
+ }
+ const slots=parallel?[["orders",0,2],["inventory",0,3]]:[["orders",0,2],["inventory",2,3]];
+ if(mode==="readfail"){
+ push("Inventory failed",{orders:S,inventory:F,synthesize:P,publish:P},"Provider returned a known failure. Required dependency never succeeded.",slots);
+ push("Workflow blocked",{orders:S,inventory:F,synthesize:P,publish:P},"Synthesis and publication stay pending. Policy may retry read later.",slots);return events;
+ }
+ slots.push(["synthesize",3,2]);
+ push("Fan-in ready",{orders:S,inventory:S,synthesize:R,publish:P},"Both required read results are committed; synthesis may start.",slots);
+ if(mode==="recovery"){
+ push("Worker crash",{orders:S,inventory:S,synthesize:R,publish:P},"Worker loses lease; in-flight synthesis is not a successful checkpoint.",slots);
+ push("Reclaim and resume",{orders:S,inventory:S,synthesize:R,publish:P},"New owner reloads outputs, skips successful reads, and redoes safe synthesis.",slots);
+ }
+ push("Synthesis committed",{orders:S,inventory:S,synthesize:S,publish:P},"Synthesis output checkpointed; publish gate can now open.",slots);
+ slots.push(["publish",5,1]);
+ push("Publication dispatched",{orders:S,inventory:S,synthesize:S,publish:R},"Approval and stable operation key checked before external side effect.",slots);
+ if(mode==="unknown"){push("Acknowledgement lost",{orders:S,inventory:S,synthesize:S,publish:U},"UNKNOWN, not FAILED. Reconcile provider state; never blindly replay.",slots);}
+ else push("Succeeded",{orders:S,inventory:S,synthesize:S,publish:S},"Report published and acknowledged; terminal result committed.",slots);
+ return events;
+}
+let sequence=[],cursor=0,timer=null;
+function stop(){if(timer){clearInterval(timer);timer=null}$("play").textContent="Auto play";}
+function render(){let e=sequence[cursor],active=Object.entries(e.states).filter(([n,s])=>s==="RUNNING").map(([n])=>n);for(const n of names){$("n-"+n).setAttribute("class","node "+e.states[n].toLowerCase());$("s-"+n).textContent=e.states[n];}for(const [edge,dep] of [["orders","orders"],["inventory","inventory"],["synthesize","synthesize"]])$("e-"+edge).setAttribute("class","edge"+(active.includes(dep)?" active":""));$("event").textContent=e.title;$("counter").textContent=" Event "+(cursor+1)+"/"+sequence.length;$("log").textContent=sequence.slice(0,cursor+1).map((x,i)=>(i+1)+". "+x.title+" — "+x.detail).join("\n");$("lesson").textContent=e.detail;$("timeline").replaceChildren();for(const n of names){let label=document.createElement("strong");label.textContent=n;let lane=document.createElement("div");lane.className="lane";const slot=e.slots.find(x=>x[0]===n);if(slot){const b=document.createElement("div");b.className="block"+(e.states[n]==="FAILED"||e.states[n]==="UNKNOWN"?" failure":"");b.style.left=(slot[1]/7*100)+"%";b.style.width=(slot[2]/7*100)+"%";b.textContent=n;lane.append(b)}$("timeline").append(label,lane)}$("prev").disabled=cursor===0;$("next").disabled=cursor===sequence.length-1}
+function reset(){stop();sequence=build();cursor=0;render()}
+$("strategy").onchange=reset;$("scenario").onchange=reset;$("restart").onclick=reset;$("prev").onclick=()=>{stop();cursor=Math.max(0,cursor-1);render()};$("next").onclick=()=>{stop();cursor=Math.min(sequence.length-1,cursor+1);render()};$("play").onclick=()=>{if(timer){stop();return}cursor=0;render();$("play").textContent="Stop animation";timer=setInterval(()=>{cursor++;render();if(cursor>=sequence.length-1)stop()},1000)};reset();
+const questions=[
+["When can a dependent task be scheduled?",["When its parents are not FAILED","Only when every required parent is SUCCEEDED","When any parent is RUNNING"],1,"A join requires committed successful dependencies."],
+["What does parallel fan-out improve?",["The critical path for independent tasks","The total amount of required work","Guaranteed cost"],0,"Overlapping independent work can reduce latency, but does not eliminate work."],
+["Publish times out after dispatch. What is its status?",["Guaranteed FAILED","UNKNOWN pending reconciliation","Safe to retry on any new worker"],1,"An external side effect may have committed despite a lost acknowledgement."],
+["Why does fencing alone not prevent duplicate email?",["It only protects internal ownership/state writes","It makes reads eventually consistent","It prevents all network retries"],0,"An external provider cannot observe your internal fencing token unless integrated."],
+["Which checkpoint is safest?",["Mark SUCCEEDED before execution","Persist result and SUCCEEDED atomically","Store only a log line"],1,"Dependents must not see a successful status without committed evidence."]
+];
+const KEY="ai-handbook-m03-l04-v1";let state={done:false,answers:{}};try{const p=JSON.parse(localStorage.getItem(KEY)||"{}");if(p&&typeof p==="object")state={done:!!p.done,answers:p.answers&&typeof p.answers==="object"&&!Array.isArray(p.answers)?p.answers:{}}}catch{}const persist=()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch{}};function drawQuiz(){const q=$("quiz");q.replaceChildren();questions.forEach((x,i)=>{let box=document.createElement("fieldset"),legend=document.createElement("legend");legend.textContent=(i+1)+". "+x[0];box.append(legend);x[1].forEach((answer,j)=>{let l=document.createElement("label"),r=document.createElement("input");r.type="radio";r.name="q"+i;r.checked=state.answers[i]===j;r.onchange=()=>{state.answers[i]=j;persist();drawQuiz()};l.append(r,document.createTextNode(" "+answer));box.append(l)});if(state.answers[i]!==undefined){let msg=document.createElement("p");msg.textContent=(state.answers[i]===x[2]?"Correct. ":"Not quite. ")+x[3];box.append(msg)}q.append(box)});$("score").textContent="Score: "+questions.filter((x,i)=>state.answers[i]===x[2]).length+"/5"}$("clear").onclick=()=>{state.answers={};persist();drawQuiz()};$("done").checked=state.done;$("done").onchange=()=>{state.done=$("done").checked;persist();$("saved").textContent=state.done?"Lesson completed in this browser.":"Lesson not marked complete."};$("saved").textContent=state.done?"Lesson completed in this browser.":"Lesson not marked complete.";drawQuiz();
+</script><script src="./navigation.js" defer></script></body></html>
