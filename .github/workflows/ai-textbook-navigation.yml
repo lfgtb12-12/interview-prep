@@ -1,11 +1,6 @@
 name: Navigation regression checks
 on:
   pull_request:
-    paths:
-      - 'ai-engineering/navigation.js'
-      - 'ai-engineering/curriculum.json'
-      - 'ai-engineering/factory/test_navigation.mjs'
-      - '.github/workflows/ai-textbook-navigation.yml'
   workflow_dispatch:
 permissions:
   contents: read

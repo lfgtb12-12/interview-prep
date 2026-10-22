@@ -8,7 +8,7 @@ This directory prototypes an **additive** lesson pipeline. Existing four expande
 2. Validate it with `python ai-engineering/factory/validate.py ai-engineering/factory/examples/M03-L05.json`.
 3. Render to an untracked staging folder with `python ai-engineering/factory/render.py ai-engineering/factory/examples/M03-L05.json --out /tmp/ai-textbook-preview`.
 4. Open the staged HTML in a browser; check accessible interactions, mobile layout and link behavior. For local development, use a static server if fetch or imports are involved.
-5. Propose content as a **draft PR** with a checklist and link to a preview. A human must approve before merging. Do not automatically merge, deploy, or overwrite a published lesson.
+5. Propose content as a **draft PR** with a checklist and link to a preview. Factory-owned, non-draft PRs can be merged automatically after both CI suites pass, but only if every changed file is on the automation allowlist. Workflow changes, root content, and modifications to existing chapter HTML always require a separate manual merge. Never overwrite a published lesson automatically.
 
 ## Spec contract
 
@@ -22,11 +22,11 @@ The renderer is intentionally dependency-free (Python 3.11+), writes only to a u
 - Generate an accessible preview with a diagram and quiz.
 - Run offline unit tests and manually verify a browser.
 - Keep working lesson files unchanged.
-- Review the draft PR; do not merge without approval.
+- Confirm both CI checks pass. Eligible non-draft factory PRs can merge automatically; draft and out-of-scope PRs remain manual.
 
 ## Planned later phases
 
 2. Replace hardcoded navigation routes with curriculum-driven paths and add regression tests for old progress keys.
 3. Build an approved shared component library and design-system layer. Migrate one existing lesson only after visual baseline comparisons.
 4. Generate 2–3 lesson specs per batch; lint factual claims, run link/lab/HTML and browser tests, create one draft PR per batch, and review accuracy, senior interview depth, accessibility and exercises.
-5. Automate CI checks and batch PR creation with least-privilege GitHub Actions permissions; never grant automatic merge access.
+5. Automate CI checks and batch PR creation with least-privilege GitHub Actions permissions; grant merge access only to the restricted privileged automation that never checks out PR code.
