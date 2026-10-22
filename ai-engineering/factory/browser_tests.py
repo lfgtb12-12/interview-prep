@@ -43,7 +43,7 @@ class BrowserComponents(unittest.TestCase):
         self.assertFalse(retry.locator("[data-next]").is_disabled())
     def test_parameter_and_quiz(self):
         exercise=self.page.locator("[data-widget]").nth(2)
-        exercise.locator("[data-value]").fill("2")
+        exercise.locator("[data-value]").evaluate("(el) => { el.value = '2'; el.dispatchEvent(new Event('input', {bubbles:true})); }")
         exercise.locator("[data-check]").click()
         self.assertIn("Correct",exercise.locator("[data-answer]").inner_text())
         quiz=self.page.locator("[data-quiz]").first
