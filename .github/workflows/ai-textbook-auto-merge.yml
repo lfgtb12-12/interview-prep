@@ -1,0 +1,65 @@
+name: Factory guarded merge
+on:
+  workflow_run:
+    workflows: ["Factory checks", "Navigation regression checks"]
+    types: [completed]
+permissions:
+  actions: read
+  contents: write
+  pull-requests: write
+jobs:
+  merge:
+    if: github.event.workflow_run.event == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      # Never checkout or execute code from the untrusted PR in a privileged workflow.
+      - name: Merge eligible factory PR only after both checks pass
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const trigger = context.payload.workflow_run;
+            const candidates = trigger.pull_requests || [];
+            for (const candidate of candidates) {
+              const number = candidate.number;
+              const { data: pr } = await github.rest.pulls.get({ owner, repo, pull_number: number });
+              if (pr.state !== 'open' || pr.draft || pr.base.ref !== 'main') continue;
+              if (!pr.head.ref.startsWith('factory/')) continue;
+              if (pr.head.repo.full_name !== owner + '/' + repo) continue;
+              if (pr.user.login !== owner) continue;
+              if (candidate.head.sha !== pr.head.sha) continue;
+              const changed = await github.paginate(github.rest.pulls.listFiles, { owner, repo, pull_number: number, per_page: 100 });
+              if (!changed.length || changed.length > 100) continue;
+              // No workflow, security, root-page, or previously published lesson modifications.
+              const allowed = changed.every(f => {
+                if (f.filename.startsWith('ai-engineering/factory/')) return true;
+                if (['ai-engineering/navigation.js','ai-engineering/curriculum.json'].includes(f.filename)) return true;
+                if (/^ai-engineering\/chapter-[a-z0-9-]+\.html$/.test(f.filename) && f.status === 'added') return true;
+                return false;
+              });
+              if (!allowed) {
+                core.info('Skipped PR #' + number + ': changes outside factory allowlist');
+                continue;
+              }
+              // Both distinct checks must succeed on this PR's exact head commit.
+              const workflows = ['Factory checks', 'Navigation regression checks'];
+              let verified = true;
+              for (const name of workflows) {
+                const { data } = await github.rest.actions.listWorkflowRunsForRepo({ owner, repo, event: 'pull_request', branch: pr.head.ref, per_page: 50 });
+                const runs = data.workflow_runs.filter(r => r.name === name && r.pull_requests.some(p => p.number === number && p.head.sha === pr.head.sha));
+                const latest = runs.sort((a,b) => b.id-a.id)[0];
+                if (!latest || latest.status !== 'completed' || latest.conclusion !== 'success') {
+                  verified = false;
+                  core.info('Waiting for ' + name + ' on PR #' + number);
+                  break;
+                }
+              }
+              if (!verified) continue;
+              try {
+                await github.rest.pulls.merge({ owner, repo, pull_number: number, merge_method: 'squash', sha: pr.head.sha });
+                core.info('Merged validated factory PR #' + number);
+              } catch (e) {
+                core.warning('PR #' + number + ' not merged: ' + e.message);
+              }
+            }
