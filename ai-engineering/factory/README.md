@@ -30,3 +30,9 @@ The renderer is intentionally dependency-free (Python 3.11+), writes only to a u
 3. Build an approved shared component library and design-system layer. Migrate one existing lesson only after visual baseline comparisons.
 4. Generate 2–3 lesson specs per batch; lint factual claims, run link/lab/HTML and browser tests, create one draft PR per batch, and review accuracy, senior interview depth, accessibility and exercises.
 5. Automate CI checks and batch PR creation with least-privilege GitHub Actions permissions; grant merge access only to the restricted privileged automation that never checks out PR code.
+
+## Reusable components (Phase 3)
+
+The renderer embeds `components.py`'s SVG state/sequence trace component into each staged HTML preview. Controls support Next, Previous and Reset; the active edge, destination node, step list and progress meter update in sync. Reduced-motion preferences disable animation. SVG labels are assigned with `textContent` rather than interpolated HTML. The factory quiz and browser-local completion format are unchanged.
+
+Generated SVG traces are **instructional edge walkthroughs**, not an execution engine or automatic graph layout. A later batch can add fan-out timelines, retry simulations and interactive parameterized exercises, each with separate validation and browser tests. Existing published lessons are deliberately not converted.
