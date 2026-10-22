@@ -37,6 +37,26 @@
             "EXECUTED"
           ]
         ]
+      },
+      "interactive": {
+        "type": "timeline",
+        "tasks": [
+          {
+            "name": "orders",
+            "start": 0,
+            "duration": 3
+          },
+          {
+            "name": "inventory",
+            "start": 0,
+            "duration": 4
+          },
+          {
+            "name": "synthesize",
+            "start": 4,
+            "duration": 2
+          }
+        ]
       }
     },
     {
@@ -45,7 +65,30 @@
       "paragraphs": [
         "If a remote write times out, the request may have succeeded even though the caller received no acknowledgement. The controller records UNKNOWN and attempts read-only reconciliation before considering a retry.",
         "Without a provider idempotency guarantee or reliable reconciliation, escalate the outcome for manual handling rather than automatically replaying a potentially duplicated side effect."
-      ]
+      ],
+      "interactive": {
+        "type": "retry",
+        "maxAttempts": 3,
+        "failuresBeforeSuccess": 2,
+        "outcome": "unknown"
+      }
+    },
+    {
+      "id": "budget",
+      "title": "Explore a retry budget",
+      "paragraphs": [
+        "Changing the allowed number of attempts affects the illustrative request budget. This exercise makes the arithmetic visible without making any network calls."
+      ],
+      "interactive": {
+        "type": "parameter",
+        "parameter": "Extra attempts",
+        "minimum": 0,
+        "maximum": 5,
+        "base": 1,
+        "factor": 1,
+        "target": 3,
+        "explanation": "Two extra retries plus the original attempt equals three attempts."
+      }
     }
   ],
   "quiz": [

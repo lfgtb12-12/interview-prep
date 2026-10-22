@@ -19,3 +19,9 @@ jobs:
           python ai-engineering/factory/validate.py ai-engineering/factory/examples/M03-L05.json
           python ai-engineering/factory/render.py ai-engineering/factory/examples/M03-L05.json --out /tmp/textbook-staging
           test -s /tmp/textbook-staging/m03-l05.html
+      - name: Install browser test dependencies
+        run: |
+          python -m pip install playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - name: Exercise interactive widgets in Chromium
+        run: python -m unittest discover -s ai-engineering/factory -p 'browser_tests.py' -v

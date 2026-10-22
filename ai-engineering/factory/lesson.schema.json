@@ -117,6 +117,19 @@
         },
         "diagram": {
           "$ref": "#/$defs/diagram"
+        },
+        "interactive": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/timeline"
+            },
+            {
+              "$ref": "#/$defs/retry"
+            },
+            {
+              "$ref": "#/$defs/parameter"
+            }
+          ]
         }
       }
     },
@@ -184,6 +197,122 @@
           "type": "integer",
           "minimum": 0,
           "maximum": 3
+        },
+        "explanation": {
+          "type": "string",
+          "minLength": 20
+        }
+      }
+    },
+    "timeline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "tasks"
+      ],
+      "properties": {
+        "type": {
+          "const": "timeline"
+        },
+        "tasks": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 8,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "start",
+              "duration"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "start": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1000
+              },
+              "duration": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "maximum": 1000
+              }
+            }
+          }
+        }
+      }
+    },
+    "retry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "maxAttempts",
+        "failuresBeforeSuccess",
+        "outcome"
+      ],
+      "properties": {
+        "type": {
+          "const": "retry"
+        },
+        "maxAttempts": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "failuresBeforeSuccess": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9
+        },
+        "outcome": {
+          "enum": [
+            "transient",
+            "unknown"
+          ]
+        }
+      }
+    },
+    "parameter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "parameter",
+        "minimum",
+        "maximum",
+        "base",
+        "factor",
+        "target",
+        "explanation"
+      ],
+      "properties": {
+        "type": {
+          "const": "parameter"
+        },
+        "parameter": {
+          "type": "string",
+          "minLength": 1
+        },
+        "minimum": {
+          "type": "number"
+        },
+        "maximum": {
+          "type": "number"
+        },
+        "base": {
+          "type": "number"
+        },
+        "factor": {
+          "type": "number"
+        },
+        "target": {
+          "type": "number"
         },
         "explanation": {
           "type": "string",
