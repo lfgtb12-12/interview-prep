@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 
 from validate import load
+from components import COMPONENT_CSS, COMPONENT_JS
 
 
 def esc(value):
@@ -27,6 +28,8 @@ pre{white-space:pre-wrap;background:#101a28;border-radius:9px;padding:15px}
 @media(max-width:640px){main{padding:12px}section{padding:15px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 """
+
+STYLE += COMPONENT_CSS
 
 SCRIPT = """
 (() => {
@@ -61,19 +64,12 @@ SCRIPT = """
   });
   document.querySelectorAll("[data-diagram]").forEach((area) => {
     const diagram = data.sections[Number(area.dataset.diagram)].diagram;
-    let index = 0;
-    const nodes = [...area.querySelectorAll("[data-node]")];
-    const message = area.querySelector("[data-current]");
-    const update = () => {
-      const current = diagram.edges[index];
-      nodes.forEach((node) => node.classList.toggle("active", node.dataset.node === current[1]));
-      message.textContent = current[0] + " → " + current[1] + " (" + (index+1) + "/" + diagram.edges.length + ")";
-    };
-    area.querySelector("button").addEventListener("click", () => { index = (index + 1) % diagram.edges.length; update(); });
-    update();
+    mountSimulation(area, diagram);
   });
 })();
 """
+
+SCRIPT = COMPONENT_JS + SCRIPT
 
 
 def render(data):
@@ -89,10 +85,13 @@ def render(data):
         chunks.extend(f'<p>{esc(p)}</p>' for p in section["paragraphs"])
         if "diagram" in section:
             diagram = section["diagram"]
-            chunks.append(f'<div data-diagram="{i}" aria-label="Interactive {esc(diagram["type"])} diagram">')
-            chunks.append('<div class="diagram">')
-            chunks.extend(f'<span data-node="{esc(node)}">{esc(node)}</span>' for node in diagram["nodes"])
-            chunks.append('</div><p data-current role="status" aria-live="polite"></p><button type="button">Next transition →</button></div>')
+            chunks.append(f'<div class="simulator" data-diagram="{i}" role="group" aria-label="Interactive {esc(diagram["type"])} graph">')
+            chunks.append('<svg class="sim-graph" viewBox="0 0 760 195" role="img" aria-label="Directed transitions between labeled states"></svg>')
+            chunks.append('<div class="sim-stage"><div class="sim-progress" aria-hidden="true"><div data-progress></div></div>')
+            chunks.append('<p class="sim-status" data-current role="status" aria-live="polite"></p></div>')
+            chunks.append('<div class="sim-actions"><button type="button" data-prev>← Previous</button><button type="button" data-next>Next →</button><button type="button" data-reset>Reset</button></div>')
+            chunks.append('<p class="sim-caption">Trace transitions individually; highlighted nodes and edges follow the active step.</p>')
+            chunks.append('<ol class="sim-step-list" data-steps></ol></div>')
         chunks.append('</section>')
     chunks.append('<section><h2>Hands-on lab</h2>')
     chunks.append(f'<h3>{esc(data["lab"]["title"])}</h3><ol>')
