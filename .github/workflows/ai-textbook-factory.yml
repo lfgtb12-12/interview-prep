@@ -1,0 +1,24 @@
+name: Factory checks
+on:
+  pull_request:
+    paths:
+      - 'ai-engineering/factory/**'
+      - '.github/workflows/ai-textbook-factory.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run offline unit tests
+        run: python -m unittest discover -s ai-engineering/factory -p 'test_*.py' -v
+      - name: Validate example and render staging preview
+        run: |
+          python ai-engineering/factory/validate.py ai-engineering/factory/examples/M03-L05.json
+          python ai-engineering/factory/render.py ai-engineering/factory/examples/M03-L05.json --out /tmp/textbook-staging
+          test -s /tmp/textbook-staging/m03-l05.html
