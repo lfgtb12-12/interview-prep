@@ -1,0 +1,195 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AI Textbook lesson specification v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "module",
+    "title",
+    "summary",
+    "objectives",
+    "sections",
+    "quiz",
+    "interview",
+    "lab"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^M[0-9]{2}-L[0-9]{2}$"
+    },
+    "module": {
+      "type": "string",
+      "pattern": "^M[0-9]{2}$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 8
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 40
+    },
+    "objectives": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "string",
+        "minLength": 10
+      }
+    },
+    "sections": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "$ref": "#/$defs/section"
+      }
+    },
+    "quiz": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "$ref": "#/$defs/question"
+      }
+    },
+    "interview": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "string",
+        "minLength": 20
+      }
+    },
+    "lab": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "title",
+        "instructions",
+        "expected"
+      ],
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 5
+        },
+        "instructions": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "string",
+            "minLength": 10
+          }
+        },
+        "expected": {
+          "type": "string",
+          "minLength": 15
+        }
+      }
+    }
+  },
+  "$defs": {
+    "section": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "paragraphs"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 5
+        },
+        "paragraphs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 30
+          }
+        },
+        "diagram": {
+          "$ref": "#/$defs/diagram"
+        }
+      }
+    },
+    "diagram": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "nodes",
+        "edges"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "state-machine",
+            "sequence"
+          ]
+        },
+        "nodes": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "edges": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "question": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "prompt",
+        "options",
+        "answer",
+        "explanation"
+      ],
+      "properties": {
+        "prompt": {
+          "type": "string",
+          "minLength": 15
+        },
+        "options": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": {
+            "type": "string",
+            "minLength": 2
+          }
+        },
+        "answer": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3
+        },
+        "explanation": {
+          "type": "string",
+          "minLength": 20
+        }
+      }
+    }
+  }
+}
