@@ -1,5 +1,6 @@
 """Batch lesson preview builder. No publication or implicit PR merge."""
 import argparse
+import html
 import json
 import subprocess
 import sys
@@ -49,7 +50,7 @@ def build(paths, out, strict=False):
     }
     for lesson, name in zip(lessons, names):
         (target / name).write_text(render(lesson), encoding="utf-8")
-    links = "\n".join(f'<li><a href="{name}">{lesson["id"]}: {lesson["title"]}</a></li>'
+    links = "\n".join(f'<li><a href="{html.escape(name, quote=True)}">{html.escape(lesson["id"])}: {html.escape(lesson["title"])}</a></li>'
                       for lesson, name in zip(lessons, names))
     (target / "index.html").write_text(
         '<!doctype html><html lang="en"><meta charset="utf-8">'
