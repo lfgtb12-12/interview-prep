@@ -71,7 +71,8 @@
       "title": "Testing crash boundaries",
       "paragraphs": [
         "Test crash-after-claim, crash-after-local-commit, provider-accepted-but-response-lost and stale worker attempting to finalize. Simulated provider counters should prove that recovering the worker does not silently duplicate writes. An in-memory demonstration is useful for learning but cannot establish crash durability; integration tests must use real persistent storage semantics.",
-        "For senior interviews, discuss checkpoint granularity, cleanup, retention, tenant isolation, poisoned messages, dead-letter queues and the cost of retaining every intermediate result. Explain which guarantees rely on the database and which require provider cooperation."
+        "For senior interviews, discuss checkpoint granularity, cleanup, retention, tenant isolation, poisoned messages, dead-letter queues and the cost of retaining every intermediate result. Explain which guarantees rely on the database and which require provider cooperation.",
+        "One practical test harness injects a failure at every transition boundary and verifies state after restart. Start by recording a run with an idempotency key and version zero. Fail immediately after the claim, then restart and prove the new worker either reclaims safely or waits for the lease. Repeat after a simulated provider acceptance with a dropped acknowledgement: the recovered worker must query the provider, not blindly replay. Finally try to finalize from a stale worker whose lease has already been superseded. Assert both durable status and the provider's effect count, because a passing status assertion alone could hide a duplicate side effect. Document that these mocks cannot prove external exactly-once delivery."
       ]
     }
   ],
