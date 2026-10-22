@@ -26,3 +26,11 @@ Next session: fetch curriculum.json, README.md, HANDOFF.md; inspect existing sit
 - Public website could not be fetched by the web verification service in this session. Do not claim a passed browser UI test until verified in a browser.
 - Test checklist: homepage renders; first lesson; five walkthrough steps; Python code; quiz explanations/score; six flashcards; local progress and export/import; small-screen layout; old homepage/notebook/flashcards still work.
 - Progress JSON schema of deployed adaptation uses `done`, `answers`, `notes`; this differs from the original ZIP's proposed format. Maintain backward compatibility or add an explicit migration before changing live progress data.
+
+## Shared navigation update — 2026-10-22
+
+- Added `navigation.js` and `navigation.css` as shared curriculum navigation used by dashboard and expanded M03-L01 chapter.
+- Both HTML pages now reference the same relative shared assets. The JS builds a collapsible module tree from `curriculum.json` (with fallback module titles), direct navigation to available lesson, quiz, flashcards and roadmap.
+- Responsive drawer on narrow screens; current chapter link highlighted; completion marker reads existing `ai-handbook-progress-v1` localStorage. No progress migration or destructive changes made.
+- Preserve sidebar component and lesson IDs when adding chapters. Add new lesson entries in curriculum manifest and update navigation link resolver for additional routes.
+- Readback from GitHub connector must verify new asset paths and references. Live GitHub Pages browser testing remains separate; remote web access is restricted in this environment.
