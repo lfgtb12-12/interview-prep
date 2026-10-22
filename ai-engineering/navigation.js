@@ -1,7 +1,7 @@
 /* Shared navigation: curriculum.json is source of truth; no framework or build step. */
 (()=>{"use strict";
 const fallback=[["M01","LLM Engineering Foundations"],["M02","Python for AI Engineering"],["M03","AI Agents & Tool Calling"],["M04","RAG & Information Retrieval"],["M05","Evaluation & Experimentation"],["M06","State, Memory & Durable Execution"],["M07","Security, Integrations & Protocols"],["M08","AI Platform & Operations"],["M09","ML Fundamentals & Model Adaptation"],["M10","Advanced Agent Architecture"],["M11","AI System Design"],["M12","Portfolio & Interview Execution"]];
-const path=location.pathname,isChapter=/chapter-agent\.html$/.test(path),base="./";
+const path=location.pathname,isChapter=/chapter-(agent|tool-contracts)\.html$/.test(path),base="./";
 const el=(tag,attrs={},txt)=>{let n=document.createElement(tag);Object.entries(attrs).forEach(([k,v])=>n.setAttribute(k,v));if(txt!==undefined)n.textContent=txt;return n};
 function progress(){try{return JSON.parse(localStorage.getItem("ai-handbook-progress-v1")||"{}")}catch{return {}}}
 let root,drawer,backdrop;
@@ -14,8 +14,8 @@ addLink(nav,"Overview / Dashboard","./",!isChapter);
 addLink(nav,"Quizzes","./#quiz");addLink(nav,"Flashcards","./#cards");addLink(nav,"12-module roadmap","./#roadmap");
 nav.append(el("div",{class:"nav-heading"},"Modules"));
 modules.forEach(m=>{let d=el("details");if(m.id==="M03")d.open=true;
-let s=el("summary",{} ,m.id+" · "+m.title);let badge=el("span",{class:"status"},m.id==="M03"?"1 lesson":"Planned");s.append(badge);d.append(s);let links=el("div",{class:"subnav"});
-if(m.id==="M03"){let a=addLink(links,"01 · What Is an AI Agent?","./chapter-agent.html",isChapter);if(progress().done)a.append(el("span",{class:"nav-done"},"✓"));addLink(links,"Lesson quiz","./#quiz");}
+let s=el("summary",{} ,m.id+" · "+m.title);let badge=el("span",{class:"status"},m.id==="M03"?"2 lessons":"Planned");s.append(badge);d.append(s);let links=el("div",{class:"subnav"});
+if(m.id==="M03"){let a=addLink(links,"01 · What Is an AI Agent?","./chapter-agent.html",path.endsWith("chapter-agent.html"));if(progress().done)a.append(el("span",{class:"nav-done"},"✓"));let b=addLink(links,"02 · Tool Contracts & Validation","./chapter-tool-contracts.html",path.endsWith("chapter-tool-contracts.html"));try{if(JSON.parse(localStorage.getItem("ai-handbook-m03-l02-v1")||"{}").done)b.append(el("span",{class:"nav-done"},"✓"))}catch{}addLink(links,"Lesson quiz","./#quiz");}
 else{links.append(el("div",{class:"nav-meta"},"Lessons coming soon"));}
 d.append(links);nav.append(d)});
 nav.append(el("div",{class:"nav-heading"},"Learning records"));nav.append(el("p",{class:"nav-meta"},"Progress is saved only in this browser. Export it from the dashboard to transfer devices."));
