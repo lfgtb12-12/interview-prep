@@ -1,3 +1,14 @@
+## Milestone 2026-10-22: M03-L02 lesson added
+
+- Confirmed repository access and write permission on `main`.
+- Added `chapter-tool-contracts.html`: complete lesson on allowlists, exact schema validation, trusted actor authorization, approval gating, prompt injection and UNKNOWN outcomes. Includes animated five-node SVG validation trace, six selectable scenarios, runnable stdlib Python 3.11+ lab with negative tests, two exercises, senior design tradeoffs, five graded local-storage quiz questions, and per-lesson completion.
+- Shared navigation (`navigation.js`) now recognizes both chapters and links both in the M03 section.
+- `curriculum.json` at v0.2 tracks M03-L01 and M03-L02; dashboard includes link to lesson 02; README updated.
+- Git commits: lesson `2ec77bb`, navigation `4d618c1`, curriculum `cf9b334`, README `0641c8a`, dashboard `18eeaf2`.
+- Verified through GitHub connector that lesson and navigation files exist on main. GitHub Pages URL could not be independently fetched from this environment; browser verification remains pending.
+- Follow-up: build M03-L03 bounded loops and deadlines; integrate per-lesson completion into the dashboard progress export/import (M03-L02 currently stores its own browser-local key `ai-handbook-m03-l02-v1`); test mobile nav and browser animation.
+- Preserve root `index.html`, root flashcards and illustrated notebook.
+
 # AI Engineering Handbook handoff
 
 Date: 2026-10-22
