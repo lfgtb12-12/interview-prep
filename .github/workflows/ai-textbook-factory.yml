@@ -1,9 +1,6 @@
 name: Factory checks
 on:
   pull_request:
-    paths:
-      - 'ai-engineering/factory/**'
-      - '.github/workflows/ai-textbook-factory.yml'
   workflow_dispatch:
 permissions:
   contents: read
