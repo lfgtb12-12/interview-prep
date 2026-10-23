@@ -1,5 +1,5 @@
 {
-  "version": "0.7",
+  "version": "0.8",
   "updated": "2026-10-23",
   "goal": "Mid-level and senior-level Applied AI Engineering interviews",
   "tracks": [
@@ -163,6 +163,24 @@
             "retrieval failure modes",
             "evidence and abstention",
             "deterministic Python lab"
+          ]
+        },
+        {
+          "id": "M04-L02",
+          "title": "Embeddings, Similarity & Vector Search",
+          "minutes": 100,
+          "level": [
+            "mid",
+            "senior"
+          ],
+          "path": "chapter-m04-l02.html",
+          "topics": [
+            "embeddings and semantic similarity",
+            "cosine vs dot product vs L2",
+            "normalization",
+            "exact search vs ANN",
+            "metric and index tradeoffs",
+            "retrieval quality"
           ]
         }
       ]
