@@ -67,7 +67,8 @@ class CheckpointLabTests(unittest.TestCase):
         self.assertEqual(provider.effect_count, 1)
 
     def test_unknown_lookup_absence_does_not_replay(self):
-        op, provider = Operation("op4", "hash4", "UNKNOWN", 2, "worker", "key")
+        op = Operation("op4", "hash4", "UNKNOWN", 2, "worker", "key")
+        provider = FakeProvider()
         self.assertFalse(reconcile(op, provider))
         self.assertEqual(op.state, "UNKNOWN")
         self.assertEqual(provider.effect_count, 0)
