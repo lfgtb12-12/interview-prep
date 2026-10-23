@@ -31,7 +31,7 @@ class M05BrowserTests(unittest.TestCase):
         self.assertIn("Abstentions",self.page.locator("#metrics").inner_text())
         # High-scoring unauthorized a9 is not included at threshold 0.90.
         self.page.locator("#threshold").evaluate("(el) => { el.value = '0.9'; el.dispatchEvent(new Event('input', {bubbles:true})); }")
-        self.assertIn("1/10",self.page.locator("#metrics").inner_text())
+        self.assertIn("10%",self.page.locator("#metrics").inner_text())
     def test_quiz_explanations(self):
         first=self.page.locator("#questions fieldset").first
         self.assertEqual(self.page.locator("#questions fieldset").count(),8)
