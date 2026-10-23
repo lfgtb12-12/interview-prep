@@ -15,6 +15,7 @@ jobs:
       - name: Run offline unit tests
         run: |
           python -m unittest discover -s ai-engineering/factory -p 'test_*.py' -v
+          python -m unittest ai-engineering/test_m04_grounding_lab.py -v
           python -m unittest ai-engineering/test_m05_eval_foundations_lab.py -v
       - name: Validate example and render staging preview
         run: |
