@@ -1,5 +1,5 @@
 {
-  "version": "0.14",
+  "version": "0.15",
   "updated": "2026-10-23",
   "goal": "Mid-level and senior-level Applied AI Engineering interviews",
   "tracks": [
@@ -296,6 +296,23 @@
             "evaluation slices",
             "calibration",
             "launch decisions"
+          ]
+        },
+        {
+          "id": "M05-L02",
+          "title": "Retrieval and Grounded-Answer Evaluation",
+          "minutes": 110,
+          "level": [
+            "mid",
+            "senior"
+          ],
+          "path": "chapter-m05-l02.html",
+          "topics": [
+            "recall@k, MRR and nDCG",
+            "context relevance and evidence retention",
+            "faithfulness and citation attribution",
+            "completeness and correct abstention",
+            "controlled RAG evaluation"
           ]
         }
       ]
