@@ -1,5 +1,5 @@
 {
-  "version": "0.13",
+  "version": "0.14",
   "updated": "2026-10-23",
   "goal": "Mid-level and senior-level Applied AI Engineering interviews",
   "tracks": [
@@ -278,8 +278,27 @@
     {
       "id": "M05",
       "title": "Evaluation & Experimentation",
-      "status": "planned",
-      "lessons": []
+      "status": "in-progress",
+      "lessons": [
+        {
+          "id": "M05-L01",
+          "title": "Evaluation Foundations: Datasets, Metrics & Failure Taxonomy",
+          "minutes": 95,
+          "level": [
+            "mid",
+            "senior"
+          ],
+          "path": "chapter-m05-l01.html",
+          "topics": [
+            "golden datasets",
+            "coverage vs correctness",
+            "abstention thresholds",
+            "evaluation slices",
+            "calibration",
+            "launch decisions"
+          ]
+        }
+      ]
     },
     {
       "id": "M06",
