@@ -14,6 +14,7 @@ jobs:
           python-version: '3.11'
       - name: Run offline unit tests
         run: python -m unittest discover -s ai-engineering/factory -p 'test_*.py' -v
+          python -m unittest ai-engineering/test_m05_eval_foundations_lab.py -v
       - name: Validate example and render staging preview
         run: |
           python ai-engineering/factory/validate.py ai-engineering/factory/examples/M03-L05.json
@@ -25,3 +26,4 @@ jobs:
           python -m playwright install --with-deps chromium
       - name: Exercise interactive widgets in Chromium
         run: python -m unittest discover -s ai-engineering/factory -p 'browser_tests.py' -v
+          python -m unittest ai-engineering/test_m05_browser.py -v
