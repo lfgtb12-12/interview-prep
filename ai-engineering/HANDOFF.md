@@ -1,3 +1,11 @@
+## Current continuation — 2026-10-23: M05-L03
+
+- M05-L02 merged via PR #26 (`55cdbbac9d6b12529542626ba60e8f93d7e4dae6`); both final-head CI checks and Pages deployment succeeded. All seven L02 browser tests passed against the public site, including 192 calculation configurations, quizzes, persistence, navigation and mobile layout.
+- M05-L03 adds `chapter-m05-l03.html`, `m05_judge_calibration_lab.py`, 13 deterministic lab tests and six browser tests. Curriculum v0.16 registers it. Topics: explicit mandatory rubrics, independent human adjudication, confusion counts and automation coverage, calibration versus probability, output validation, bias perturbations, review routing and judge drift.
+- Interactive judge calibration uses twelve authored cases and two hypothetical rating profiles. Threshold/review changes recalculate actual counts. A separate order-swap widget distinguishes identity-mapped consistency from agreement with humans. No live judge service is called and no rating is claimed to be a calibrated probability.
+- Browser tests compare Python and JavaScript across 40 policy configurations, exercise controls and pairwise reversal, check eight explained quizzes and saved progress, and verify mobile curriculum navigation. The existing Factory test discovery includes L03 without another workflow change.
+- Next: check L03 PR/CI/Pages state and run its live browser tests before claiming publication. Then build M05-L04 — Experiment Design, A/B Tests & Statistical Reasoning, using `M05-OUTLINE.md`. Inspect the repository/tests first. Maintain natural interview answers, meaningful calculations, standalone Python labs and deterministic tests.
+
 ## Current continuation — 2026-10-23: M05-L02
 
 - M04 has seven registered lessons; M05-L01 was verified on live GitHub Pages in Chromium (threshold calculations, eight quizzes, sidebar navigation and completion persistence).

@@ -1,5 +1,5 @@
 {
-  "version": "0.15",
+  "version": "0.16",
   "updated": "2026-10-23",
   "goal": "Mid-level and senior-level Applied AI Engineering interviews",
   "tracks": [
@@ -313,6 +313,23 @@
             "faithfulness and citation attribution",
             "completeness and correct abstention",
             "controlled RAG evaluation"
+          ]
+        },
+        {
+          "id": "M05-L03",
+          "title": "LLM-as-Judge, Rubrics & Human Calibration",
+          "minutes": 110,
+          "level": [
+            "mid",
+            "senior"
+          ],
+          "path": "chapter-m05-l03.html",
+          "topics": [
+            "judge rubrics and evidence",
+            "human adjudication and calibration",
+            "confusion matrices and review coverage",
+            "position and style bias",
+            "strict evaluator output validation"
           ]
         }
       ]
