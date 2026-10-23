@@ -1,5 +1,5 @@
 {
-  "version": "0.10",
+  "version": "0.11",
   "updated": "2026-10-23",
   "goal": "Mid-level and senior-level Applied AI Engineering interviews",
   "tracks": [
@@ -217,6 +217,24 @@
             "query rewriting and decomposition",
             "recall@k and MRR",
             "retrieval debugging and ACLs"
+          ]
+        },
+        {
+          "id": "M04-L05",
+          "title": "Grounded Generation, Citations & Safety",
+          "minutes": 110,
+          "level": [
+            "mid",
+            "senior"
+          ],
+          "path": "chapter-m04-l05.html",
+          "topics": [
+            "grounded answers and evidence support",
+            "citation provenance and validation",
+            "abstention and retrieval failures",
+            "prompt injection and source trust",
+            "ACL revocation",
+            "grounding evaluation"
           ]
         }
       ]
