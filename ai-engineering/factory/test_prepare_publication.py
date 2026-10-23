@@ -50,7 +50,7 @@ class PublicationCandidateTests(unittest.TestCase):
             output = Path(folder) / "candidate"
             prepare(SPECS, output, SITE / "curriculum.json")
             with self.assertRaises(FileExistsError):
-                prepare(SPECS, output, SITE / "curriculum.json")
+                prepare(SPECS, output, self.draft_manifest(folder))
 
     def test_no_write_into_live_site(self):
         with self.assertRaisesRegex(ValueError, "deployed directory"):
