@@ -1,5 +1,5 @@
 {
-  "version": "0.12",
+  "version": "0.13",
   "updated": "2026-10-23",
   "goal": "Mid-level and senior-level Applied AI Engineering interviews",
   "tracks": [
@@ -145,7 +145,7 @@
     {
       "id": "M04",
       "title": "RAG & Information Retrieval",
-      "status": "in-progress",
+      "status": "complete",
       "lessons": [
         {
           "id": "M04-L01",
@@ -253,6 +253,24 @@
             "labeled eval datasets",
             "latency and cost tradeoffs",
             "root-cause tracing and rollout"
+          ]
+        },
+        {
+          "id": "M04-L07",
+          "title": "Advanced RAG System Design & Implementation",
+          "minutes": 120,
+          "level": [
+            "mid",
+            "senior"
+          ],
+          "path": "chapter-m04-l07.html",
+          "topics": [
+            "end-to-end RAG system design",
+            "versioned ingestion and tombstones",
+            "ACL and citation boundary",
+            "hybrid retrieval and bounded reranking",
+            "outages and graceful degradation",
+            "evaluation SLOs and rollout"
           ]
         }
       ]
