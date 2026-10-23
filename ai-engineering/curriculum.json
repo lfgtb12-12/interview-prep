@@ -1,5 +1,5 @@
 {
-  "version": "0.8",
+  "version": "0.9",
   "updated": "2026-10-23",
   "goal": "Mid-level and senior-level Applied AI Engineering interviews",
   "tracks": [
@@ -181,6 +181,24 @@
             "exact search vs ANN",
             "metric and index tradeoffs",
             "retrieval quality"
+          ]
+        },
+        {
+          "id": "M04-L03",
+          "title": "Document Ingestion, Chunking & Metadata",
+          "minutes": 105,
+          "level": [
+            "mid",
+            "senior"
+          ],
+          "path": "chapter-m04-l03.html",
+          "topics": [
+            "document extraction and normalization",
+            "chunk sizes and overlap",
+            "source provenance",
+            "ACL metadata and revocation",
+            "incremental indexing and deletions",
+            "retrieval-ready chunks"
           ]
         }
       ]
