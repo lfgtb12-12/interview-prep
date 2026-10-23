@@ -13,7 +13,8 @@ jobs:
         with:
           python-version: '3.11'
       - name: Run offline unit tests
-        run: python -m unittest discover -s ai-engineering/factory -p 'test_*.py' -v
+        run: |
+          python -m unittest discover -s ai-engineering/factory -p 'test_*.py' -v
           python -m unittest ai-engineering/test_m05_eval_foundations_lab.py -v
       - name: Validate example and render staging preview
         run: |
@@ -25,5 +26,6 @@ jobs:
           python -m pip install playwright==1.56.0
           python -m playwright install --with-deps chromium
       - name: Exercise interactive widgets in Chromium
-        run: python -m unittest discover -s ai-engineering/factory -p 'browser_tests.py' -v
+        run: |
+          python -m unittest discover -s ai-engineering/factory -p 'browser_tests.py' -v
           python -m unittest ai-engineering/test_m05_browser.py -v
