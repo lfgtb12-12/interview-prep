@@ -1,5 +1,5 @@
 {
-  "version": "0.6",
+  "version": "0.7",
   "updated": "2026-10-23",
   "goal": "Mid-level and senior-level Applied AI Engineering interviews",
   "tracks": [
@@ -145,8 +145,27 @@
     {
       "id": "M04",
       "title": "RAG & Information Retrieval",
-      "status": "planned",
-      "lessons": []
+      "status": "in-progress",
+      "lessons": [
+        {
+          "id": "M04-L01",
+          "title": "RAG Architecture & Retrieval Pipelines",
+          "minutes": 90,
+          "level": [
+            "mid",
+            "senior"
+          ],
+          "path": "chapter-m04-l01.html",
+          "topics": [
+            "retrieval vs generation",
+            "indexing and query paths",
+            "access control",
+            "retrieval failure modes",
+            "evidence and abstention",
+            "deterministic Python lab"
+          ]
+        }
+      ]
     },
     {
       "id": "M05",
