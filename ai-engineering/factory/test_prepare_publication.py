@@ -48,7 +48,7 @@ class PublicationCandidateTests(unittest.TestCase):
     def test_no_overwrite(self):
         with tempfile.TemporaryDirectory() as folder:
             output = Path(folder) / "candidate"
-            prepare(SPECS, output, SITE / "curriculum.json")
+            prepare(SPECS, output, self.draft_manifest(folder))
             with self.assertRaises(FileExistsError):
                 prepare(SPECS, output, self.draft_manifest(folder))
 
