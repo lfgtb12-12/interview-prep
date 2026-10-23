@@ -1,5 +1,5 @@
 {
-  "version": "0.16",
+  "version": "0.17",
   "updated": "2026-10-23",
   "goal": "Mid-level and senior-level Applied AI Engineering interviews",
   "tracks": [
@@ -330,6 +330,24 @@
             "confusion matrices and review coverage",
             "position and style bias",
             "strict evaluator output validation"
+          ]
+        },
+        {
+          "id": "M05-L04",
+          "title": "Experiment Design, A/B Tests & Statistical Reasoning",
+          "minutes": 120,
+          "level": [
+            "mid",
+            "senior"
+          ],
+          "path": "chapter-m05-l04.html",
+          "topics": [
+            "paired offline and randomized online comparisons",
+            "randomization units and clustering",
+            "confidence intervals and practical margins",
+            "power and minimum detectable effects",
+            "stopping rules and allocation integrity",
+            "risk guardrails and rollout decisions"
           ]
         }
       ]

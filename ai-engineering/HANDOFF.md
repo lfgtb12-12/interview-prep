@@ -1,3 +1,13 @@
+## Current continuation — 2026-10-23: M05-L04
+
+- M05-L02 and L03 were merged, CI/Pages passed, all 13 live browser tests passed, and the user confirmed both pages.
+- M05-L04 adds `chapter-m05-l04.html`, `m05_experiment_lab.py`, 20 deterministic lab tests and seven browser tests. Curriculum v0.17 registers the lesson.
+- Content distinguishes paired offline evaluations from online randomization, assignment/analysis units and clustering, absolute versus relative lift, normal-approximation intervals and practical margins, MDE/power, stopping and multiplicity, allocation integrity and rare-risk bounds.
+- Interactive experiment fixture compares independent-user intervals with invalid copied-row intervals; changing copies cannot change the valid result. Sample size, scenario, preselected confidence, margin, SRM and opportunistic-stopping controls change calculated results and the decision. A separate MDE control computes a simplified planning size.
+- Method limits are explicit: no clustered/sequential/multiple-comparison inference, no universal normal-interval guarantee, no zero-risk inference from zero events, and planning against zero differs from requiring an interval above a practical margin. All scenarios are authored fixtures.
+- Seven browser tests include Python/JS agreement over 240 experiment configurations, guardrail/integrity precedence, plot and policy behavior, MDE/risk arithmetic, eight explained quizzes, saved progress and mobile navigation. Existing workflow discovery runs L04 without workflow edits.
+- Next: verify the L04 PR, CI and Pages state and run live browser checks before claiming publication. Then build M05-L05 — Agent & Tool-Use Evals, following `M05-OUTLINE.md`. Inspect the current repo and tests first; prioritize semantic quality, meaningful interactions and natural interview answers. L06 and L07 remain after L05.
+
 ## Current continuation — 2026-10-23: M05-L03
 
 - M05-L02 merged via PR #26 (`55cdbbac9d6b12529542626ba60e8f93d7e4dae6`); both final-head CI checks and Pages deployment succeeded. All seven L02 browser tests passed against the public site, including 192 calculation configurations, quizzes, persistence, navigation and mobile layout.
