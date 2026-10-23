@@ -1,5 +1,5 @@
 {
-  "version": "0.11",
+  "version": "0.12",
   "updated": "2026-10-23",
   "goal": "Mid-level and senior-level Applied AI Engineering interviews",
   "tracks": [
@@ -235,6 +235,24 @@
             "prompt injection and source trust",
             "ACL revocation",
             "grounding evaluation"
+          ]
+        },
+        {
+          "id": "M04-L06",
+          "title": "RAG Evaluation, Debugging & Operations",
+          "minutes": 115,
+          "level": [
+            "mid",
+            "senior"
+          ],
+          "path": "chapter-m04-l06.html",
+          "topics": [
+            "retrieval and context recall",
+            "precision MRR nDCG",
+            "faithfulness and citation precision",
+            "labeled eval datasets",
+            "latency and cost tradeoffs",
+            "root-cause tracing and rollout"
           ]
         }
       ]
