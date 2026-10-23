@@ -1,5 +1,5 @@
 {
-  "version": "0.4",
+  "version": "0.5",
   "updated": "2026-10-22",
   "goal": "Mid-level and senior-level Applied AI Engineering interviews",
   "tracks": [
@@ -87,6 +87,40 @@
             "checkpoints and recovery",
             "unknown side effects",
             "Python concurrency tests"
+          ]
+        },
+        {
+          "id": "M03-L06",
+          "title": "Agent Observability and Evaluation",
+          "minutes": 90,
+          "level": [
+            "mid",
+            "senior"
+          ],
+          "path": "chapter-m03-l06.html",
+          "topics": [
+            "tracing",
+            "groundedness",
+            "completeness",
+            "SLOs",
+            "incident debugging"
+          ]
+        },
+        {
+          "id": "M03-L07",
+          "title": "Agent Memory, Context and Durable Checkpoints",
+          "minutes": 90,
+          "level": [
+            "mid",
+            "senior"
+          ],
+          "path": "chapter-m03-l07.html",
+          "topics": [
+            "checkpoints",
+            "worker claims",
+            "idempotency",
+            "UNKNOWN reconciliation",
+            "recovery testing"
           ]
         }
       ]
