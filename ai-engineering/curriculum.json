@@ -1,5 +1,5 @@
 {
-  "version": "0.9",
+  "version": "0.10",
   "updated": "2026-10-23",
   "goal": "Mid-level and senior-level Applied AI Engineering interviews",
   "tracks": [
@@ -199,6 +199,24 @@
             "ACL metadata and revocation",
             "incremental indexing and deletions",
             "retrieval-ready chunks"
+          ]
+        },
+        {
+          "id": "M04-L04",
+          "title": "Hybrid Retrieval, Reranking & Query Rewriting",
+          "minutes": 110,
+          "level": [
+            "mid",
+            "senior"
+          ],
+          "path": "chapter-m04-l04.html",
+          "topics": [
+            "BM25 lexical retrieval",
+            "hybrid RRF fusion",
+            "bi-encoder vs cross-encoder",
+            "query rewriting and decomposition",
+            "recall@k and MRR",
+            "retrieval debugging and ACLs"
           ]
         }
       ]
