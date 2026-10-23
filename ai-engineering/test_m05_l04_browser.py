@@ -70,6 +70,8 @@ class ExperimentBrowserTests(unittest.TestCase):
         self.page.locator('#mismatch').uncheck();self.page.locator('#peek').check()
         self.assertEqual(self.current()['decision'],'investigate')
         self.assertIn('early stopping',self.page.locator('#integrity').inner_text())
+        self.assertIn('Users (nominal)',self.page.locator('#interval-plot').text_content())
+        self.assertIn('stopping assumption is broken',self.page.locator('#risk-bound').inner_text())
     def test_planning_and_rare_risk(self):
         self.assertIn('2,791',self.page.locator('#planning').inner_text())
         self.slider('mde',1.5)
