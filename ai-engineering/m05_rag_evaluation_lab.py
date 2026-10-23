@@ -32,6 +32,17 @@ def retrieval_metrics(ranked, grades, k):
     }
 
 
+def mrr_at_k(queries, k):
+    """Macro average across distinct questions; report unanswerable exclusions."""
+    ids = [q['id'] for q in queries]
+    if len(ids) != len(set(ids)):
+        raise ValueError("distinct query IDs required")
+    scores = [retrieval_metrics(q['ranked'], q['grades'], k)['rr'] for q in queries]
+    eligible = [score for score in scores if score is not None]
+    return {'mrr': mean(eligible) if eligible else None,
+            'eligible': len(eligible), 'excluded': len(scores) - len(eligible)}
+
+
 def answer_metrics(claims, context, required):
     """Claims have reviewed supporting IDs, citations, correct flag and fact ID.
 
@@ -83,6 +94,12 @@ if __name__ == '__main__':
     for ranked in rankings:
         print(ranked, retrieval_metrics(ranked, GRADES, 2))
         print('answer:', answer_metrics(CLAIMS, ranked[:2], REQUIRED))
-    # RR is a single-query metric. MRR is its mean over eligible queries.
-    print('MRR@2:', mean(retrieval_metrics(r, GRADES, 2)['rr'] for r in rankings))
+    # The rankings above compare configurations of ONE question, not MRR.
+    # MRR below averages three DISTINCT information needs at a fixed cutoff.
+    queries = [
+        {'id': 'payment-status-and-retry', 'ranked': ['C','A','B','D'], 'grades': GRADES},
+        {'id': 'change-dashboard-theme', 'ranked': ['D','C'], 'grades': {'D':3,'C':0}},
+        {'id': 'health-check-retry', 'ranked': ['D','A'], 'grades': {'C':3,'D':0,'A':0}},
+    ]
+    print('MRR@2 across distinct questions:', mrr_at_k(queries, 2))
     print('abstention:', abstention_metrics([(True, False), (True, True), (False, True), (False, False)]))

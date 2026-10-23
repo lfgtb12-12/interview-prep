@@ -2,9 +2,19 @@ import sys
 import unittest
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from m05_rag_evaluation_lab import retrieval_metrics as retrieval, answer_metrics as answer, abstention_metrics, GRADES, CLAIMS, REQUIRED
+from m05_rag_evaluation_lab import retrieval_metrics as retrieval, answer_metrics as answer, abstention_metrics, mrr_at_k, GRADES, CLAIMS, REQUIRED
 
 class RagEvaluationTests(unittest.TestCase):
+    def test_mrr_includes_misses_and_reports_exclusions(self):
+        queries=[{'id':'q1','ranked':['C','A'],'grades':GRADES},
+                 {'id':'q2','ranked':['D'],'grades':{'D':3}},
+                 {'id':'q3','ranked':['D'],'grades':{'C':3,'D':0}},
+                 {'id':'q4','ranked':['D'],'grades':{'D':0}}]
+        self.assertEqual(mrr_at_k(queries,2),{'mrr':.5,'eligible':3,'excluded':1})
+    def test_mrr_no_eligible_queries_or_duplicate_ids(self):
+        self.assertIsNone(mrr_at_k([],2)['mrr'])
+        q={'id':'same','ranked':['A'],'grades':GRADES}
+        with self.assertRaises(ValueError):mrr_at_k([q,q],2)
     def test_baseline_recall_and_rr(self):
         m=retrieval(['C','A','B','D'],GRADES,2)
         self.assertEqual(m['recall'],.5)
