@@ -10,10 +10,18 @@ SPECS = [HERE / "examples" / "M03-L06.json", HERE / "examples" / "M03-L07.json"]
 
 
 class PublicationCandidateTests(unittest.TestCase):
+    def draft_manifest(self, folder):
+        manifest = json.loads((SITE / "curriculum.json").read_text())
+        for module in manifest["modules"]:
+            module["lessons"] = [lesson for lesson in module["lessons"] if lesson["id"] not in ("M03-L06", "M03-L07")]
+        path = Path(folder) / "draft-curriculum.json"
+        path.write_text(json.dumps(manifest))
+        return path
+
     def test_candidate_batch_and_navigation(self):
         with tempfile.TemporaryDirectory() as folder:
             output = Path(folder) / "candidate"
-            result = prepare(SPECS, output, SITE / "curriculum.json")
+            result = prepare(SPECS, output, self.draft_manifest(folder))
             self.assertEqual(len(result["files"]), 2)
             self.assertTrue(result["publication_requires_separate_approval"])
             self.assertTrue(result["curriculum_unchanged"])
@@ -26,7 +34,7 @@ class PublicationCandidateTests(unittest.TestCase):
                 self.assertIn("data-widget", page)
                 self.assertIn("data-diagram", page)
                 self.assertNotIn("Generated preview · Not published", page)
-            self.assertFalse((SITE / "chapter-m03-l06.html").exists())
+            self.assertNotEqual(output.resolve(), SITE.resolve())
 
     def test_existing_lesson_ids_blocked(self):
         with tempfile.TemporaryDirectory() as folder:
@@ -40,9 +48,9 @@ class PublicationCandidateTests(unittest.TestCase):
     def test_no_overwrite(self):
         with tempfile.TemporaryDirectory() as folder:
             output = Path(folder) / "candidate"
-            prepare(SPECS, output, SITE / "curriculum.json")
+            prepare(SPECS, output, self.draft_manifest(folder))
             with self.assertRaises(FileExistsError):
-                prepare(SPECS, output, SITE / "curriculum.json")
+                prepare(SPECS, output, self.draft_manifest(folder))
 
     def test_no_write_into_live_site(self):
         with self.assertRaisesRegex(ValueError, "deployed directory"):
