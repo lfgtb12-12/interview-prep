@@ -42,6 +42,6 @@ class EvaluationTests(unittest.TestCase):
         self.assertEqual(evaluate((x,),.8)["errors"],1)
     def test_answerable_coverage_denominator(self):
         m=evaluate(FIXTURES,.75)
-        self.assertAlmostEqual(m["answerable_coverage"],3/7)
+        self.assertAlmostEqual(m["answerable_coverage"],3/6)
 
 if __name__=="__main__":unittest.main()
