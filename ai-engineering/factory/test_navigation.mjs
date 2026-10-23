@@ -33,7 +33,7 @@ function simulate(data,storage={},pathname='/interview-prep/ai-engineering/chapt
 function links(nodes){return nodes.filter(n=>n.tag==='a')}
 test('manifest defines unique valid M03 lesson paths',()=>{
   const m03=manifest.modules.find(m=>m.id==='M03');
-  assert.equal(m03.lessons.length,4);
+  assert.equal(m03.lessons.length,6);
   const paths=m03.lessons.map(l=>l.path);
   assert.equal(new Set(paths).size,paths.length);
   for(const path of paths)assert.equal(fs.existsSync(new URL(path,root)),true,path);
