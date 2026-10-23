@@ -1,6 +1,6 @@
 {
-  "version": "0.5",
-  "updated": "2026-10-22",
+  "version": "0.6",
+  "updated": "2026-10-23",
   "goal": "Mid-level and senior-level Applied AI Engineering interviews",
   "tracks": [
     "Learn",
@@ -87,6 +87,23 @@
             "checkpoints and recovery",
             "unknown side effects",
             "Python concurrency tests"
+          ]
+        },
+        {
+          "id": "M03-L05",
+          "title": "Human Approval and Recovery Boundaries",
+          "minutes": 95,
+          "level": [
+            "mid",
+            "senior"
+          ],
+          "path": "chapter-m03-l05.html",
+          "topics": [
+            "approval gates",
+            "payload-bound authorization",
+            "permission revocation",
+            "uncertain side effects",
+            "manual reconciliation"
           ]
         },
         {
