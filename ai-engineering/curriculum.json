@@ -1,5 +1,5 @@
 {
-  "version": "0.19",
+  "version": "0.20",
   "updated": "2026-10-23",
   "goal": "Mid-level and senior-level Applied AI Engineering interviews",
   "tracks": [
@@ -278,7 +278,7 @@
     {
       "id": "M05",
       "title": "Evaluation & Experimentation",
-      "status": "in-progress",
+      "status": "complete",
       "lessons": [
         {
           "id": "M05-L01",
@@ -384,6 +384,24 @@
             "latency cost and missing telemetry gates",
             "shadow and canary rollout",
             "production observability and rollback"
+          ]
+        },
+        {
+          "id": "M05-L07",
+          "title": "Evaluation System Design Capstone",
+          "minutes": 120,
+          "level": [
+            "mid",
+            "senior"
+          ],
+          "path": "chapter-m05-l07.html",
+          "topics": [
+            "end-to-end evaluation architecture",
+            "groundedness and tool safety gates",
+            "offline shadow and online launch phases",
+            "rare slice and data integrity",
+            "practical effect intervals and rollback",
+            "production audit and monitoring"
           ]
         }
       ]
