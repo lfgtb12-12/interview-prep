@@ -17,9 +17,9 @@ class Evidence:
     missing_traces: int = 0
     shadow_latency_ms: int = 1050
     shadow_cost_mills: int = 18
-    online_users: int = 2000
-    control_success: int = 1600
-    treatment_success: int = 1660
+    online_users: int = 20000
+    control_success: int = 16000
+    treatment_success: int = 16600
     guardrail_incidents: int = 0
 
 FIXTURES = {
@@ -31,7 +31,7 @@ FIXTURES = {
     "slow": Evidence("slow",shadow_latency_ms=1700),
     "expensive": Evidence("expensive",shadow_cost_mills=30),
     "inconclusive": Evidence("inconclusive",online_users=200,control_success=160,treatment_success=166),
-    "online_harm": Evidence("online_harm",control_success=1600,treatment_success=1500),
+    "online_harm": Evidence("online_harm",control_success=16000,treatment_success=15000),
     "incident": Evidence("incident",guardrail_incidents=1),
 }
 def decide(scenario="healthy", phase="online", rare_floor=.75, margin=.01):
