@@ -1,3 +1,10 @@
+## Current continuation — 2026-10-23: M05-L06
+
+- L05 PR #29 merged to main at `81a0530`; GitHub Pages workflow succeeded for that commit. Separate live-browser verification was not run in this session.
+- Feature branch `m05-l06-ci-gates-monitoring` adds `chapter-m05-l06.html`, `m05_ci_gates_lab.py`, `test_m05_ci_gates_lab.py`, and `test_m05_l06_browser.py`; curriculum v0.19.
+- Main fixture has six common and four rare support tasks, paired reference/candidate labels, explicit missing-observation coverage, slice floors, paired losses, independent safety and trace gates, and latency/cost budgets. Interactive simulator calculates gate decisions; eight explained quizzes and mid/senior spoken answers.
+- Teaching fixtures are not production confidence bounds or safety guarantees. CI must be verified at the final feature head, merged only if sound, then Pages deployment and live browser tests verified separately. L07 capstone remains afterward.
+
 ## Current continuation — 2026-10-23: M05-L05 (feature branch)
 
 - Feature branch `m05-l05-agent-tool-evals` from verified `main` at `3ad9f0a`. Root and Factory AGENTS.md were not present.
