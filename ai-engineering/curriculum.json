@@ -1,5 +1,5 @@
 {
-  "version": "0.17",
+  "version": "0.18",
   "updated": "2026-10-23",
   "goal": "Mid-level and senior-level Applied AI Engineering interviews",
   "tracks": [
@@ -348,6 +348,24 @@
             "power and minimum detectable effects",
             "stopping rules and allocation integrity",
             "risk guardrails and rollout decisions"
+          ]
+        },
+        {
+          "id": "M05-L05",
+          "title": "Agent & Tool-Use Evals",
+          "minutes": 115,
+          "level": [
+            "mid",
+            "senior"
+          ],
+          "path": "chapter-m05-l05.html",
+          "topics": [
+            "task outcome and trajectory evaluation",
+            "tool selection and argument validity",
+            "authorization and adversarial boundaries",
+            "ambiguous outcomes and reconciliation",
+            "duplicate side effects and idempotency",
+            "alternative trajectories and safety gates"
           ]
         }
       ]
