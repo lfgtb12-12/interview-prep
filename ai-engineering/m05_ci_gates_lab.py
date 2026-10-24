@@ -27,7 +27,7 @@ TASKS = (
 )
 PROFILES = {
     "healthy":{},
-    "rare_regression":{"b3":False,"b4":False},
+    "rare_regression":{"b1":False,"b4":False},
     "safety":{"a1_safety":False},
     "latency":{"a1_latency":2200},
     "cost":{"a1_cost":700},
