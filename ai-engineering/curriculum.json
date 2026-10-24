@@ -1,5 +1,5 @@
 {
-  "version": "0.18",
+  "version": "0.19",
   "updated": "2026-10-23",
   "goal": "Mid-level and senior-level Applied AI Engineering interviews",
   "tracks": [
@@ -366,6 +366,24 @@
             "ambiguous outcomes and reconciliation",
             "duplicate side effects and idempotency",
             "alternative trajectories and safety gates"
+          ]
+        },
+        {
+          "id": "M05-L06",
+          "title": "CI Evaluation Gates, Regression & Production Monitoring",
+          "minutes": 115,
+          "level": [
+            "mid",
+            "senior"
+          ],
+          "path": "chapter-m05-l06.html",
+          "topics": [
+            "versioned golden sets and reproducibility",
+            "slice quality and paired regression gates",
+            "hard safety and tool trace checks",
+            "latency cost and missing telemetry gates",
+            "shadow and canary rollout",
+            "production observability and rollback"
           ]
         }
       ]
