@@ -1,3 +1,11 @@
+## Current continuation — 2026-10-23: M05-L05 (feature branch)
+
+- Feature branch `m05-l05-agent-tool-evals` from verified `main` at `3ad9f0a`. Root and Factory AGENTS.md were not present.
+- Added `chapter-m05-l05.html`, `m05_agent_tool_eval_lab.py`, 16 deterministic tests in `test_m05_agent_tool_eval_lab.py`, and five Playwright tests in `test_m05_l05_browser.py`. Curriculum v0.18 registers L05.
+- Twelve authored scenarios cover alternate safe trajectories, tool/argument/authorization gates, ambiguous side effects, blind retry, repeat invocation, escalation and adversarial attempts. The fixture explicitly does not assert actual duplicate external writes based only on calls.
+- Interactive UI reports task outcome and mandatory gate results separately, offers exact-trace grading as an intentionally brittle comparison, and provides eight explained quiz items plus conversational mid/senior answers.
+- Pending verification: run offline + browser tests, check final PR-head CI, merge, verify GitHub Pages deployment and live browser behavior. None of those are implied by branch commits. After L05, build M05-L06 and L07.
+
 ## Current continuation — 2026-10-23: M05-L04
 
 - M05-L02 and L03 were merged, CI/Pages passed, all 13 live browser tests passed, and the user confirmed both pages.
