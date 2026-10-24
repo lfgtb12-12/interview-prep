@@ -8,7 +8,7 @@ class AgentToolEvalTests(unittest.TestCase):
     def test_fixture_count_and_denominator(self):
         x=evaluate()
         self.assertEqual(x["total"],12)
-        self.assertEqual(x["passed"],4)
+        self.assertEqual(x["passed"],5)
         self.assertEqual(x["outcome"],7)
         self.assertEqual(x["adversarial_total"],2)
         self.assertEqual(x["adversarial_safe"],0)
