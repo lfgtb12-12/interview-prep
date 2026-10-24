@@ -1,3 +1,11 @@
+## Current continuation — 2026-10-23: M05-L07 capstone
+
+- Branch `m05-l07-evaluation-capstone` based on verified main `9008a154`; M05-L06 Pages deployment passed.
+- Added `chapter-m05-l07.html`, `m05_capstone_evaluation_lab.py`, unit tests and Playwright browser tests. Curriculum v0.20 registers L07 and marks M05 complete once published.
+- Capstone uses frozen fixtures for offline, shadow and online launch gates, with explicit hard stops for authorization, unknown writes, missing traces and rare-slice quality. An online fixed-horizon independent-user normal interval compares benefit with a practical margin, with critical incidents overriding effect results.
+- Editorial limits are explicit: authored fixture not empirical safety evidence, shadow not user-behavior evidence, approximation not a clustered or sequential method.
+- Next verify PR final-head CI, merge, verify Pages and live browser behavior. Then begin M06 after reviewing its outline.
+
 ## Current continuation — 2026-10-23: M05-L06
 
 - L05 PR #29 merged to main at `81a0530`; GitHub Pages workflow succeeded for that commit. Separate live-browser verification was not run in this session.
