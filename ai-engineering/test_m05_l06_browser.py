@@ -40,20 +40,20 @@ class CIGateBrowserTests(unittest.TestCase):
                             js=self.page.evaluate("args=>evaluateCIGates(...args)",args)
                             self.assertEqual(js,py)
     def test_scenarios_change_real_gates(self):
-        self.assertIn("PASS",self.page.locator("#decision").inner_text())
+        self.assertIn("Passes",self.page.locator("#decision").inner_text())
         for scenario,keyword in (("rare_regression","paired regressions"),("safety","unsafe"),("latency","latency"),("cost","cost"),("broken_trace","broken trace"),("missing","missing observations")):
             self.page.locator("#profile").select_option(scenario)
-            self.assertIn("BLOCK",self.page.locator("#decision").inner_text())
+            self.assertIn("Blocked",self.page.locator("#decision").inner_text())
             self.assertIn(keyword,self.page.locator("#failures").inner_text())
         self.page.locator("#strictmissing").uncheck()
-        self.assertIn("PASS",self.page.locator("#decision").inner_text())
+        self.assertIn("Passes",self.page.locator("#decision").inner_text())
     def test_budget_controls_change_outcome(self):
         self.page.locator("#profile").select_option("latency")
         self.page.locator("#latency").select_option("2500")
-        self.assertIn("PASS",self.page.locator("#decision").inner_text())
+        self.assertIn("Passes",self.page.locator("#decision").inner_text())
         self.page.locator("#profile").select_option("cost")
         self.page.locator("#cost").select_option("1000")
-        self.assertIn("PASS",self.page.locator("#decision").inner_text())
+        self.assertIn("Passes",self.page.locator("#decision").inner_text())
     def test_quizzes_and_history_preserved(self):
         quiz=json.loads(self.page.locator("#lesson-data").text_content())["quiz"]
         self.assertEqual(len(quiz),8)
