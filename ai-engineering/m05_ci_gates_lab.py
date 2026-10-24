@@ -22,7 +22,7 @@ TASKS = (
     Task("a1","common",True,True),Task("a2","common",True,True),
     Task("a3","common",True,True),Task("a4","common",False,True),
     Task("a5","common",True,True),Task("a6","common",True,True),
-    Task("b1","rare",True,False),Task("b2","rare",True,False),
+    Task("b1","rare",True,True),Task("b2","rare",True,True),
     Task("b3","rare",False,True),Task("b4","rare",True,True),
 )
 PROFILES = {
